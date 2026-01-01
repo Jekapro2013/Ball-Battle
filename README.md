@@ -1,10 +1,9 @@
-# Ball-Battle[Game .html](https://github.com/user-attachments/files/24402847/Game.html)
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Шарики-Бойцы: Все против всех!</title>
+    <title>Шарики-Бойцы: Полная версия</title>
     <style>
         * {
             margin: 0;
@@ -23,7 +22,7 @@
         
         .screen {
             display: none;
-            max-width: 900px;
+            max-width: 1200px;
             margin: 0 auto;
             text-align: center;
             animation: fadeIn 0.5s ease;
@@ -42,204 +41,225 @@
             background: linear-gradient(45deg, #4CC9F0, #4361ee);
             color: white;
             border: none;
-            padding: 14px 28px;
-            margin: 10px;
-            border-radius: 12px;
+            padding: 12px 24px;
+            margin: 8px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: bold;
             transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(76, 201, 240, 0.3);
-            position: relative;
-            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(76, 201, 240, 0.3);
         }
         
         button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(76, 201, 240, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(76, 201, 240, 0.4);
         }
         
-        button:hover::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            animation: shimmer 0.8s;
+        .container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
         }
         
-        @keyframes shimmer {
-            to { left: 100%; }
+        .left-panel, .right-panel {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #4CC9F0;
+            min-width: 250px;
+            max-width: 300px;
+        }
+        
+        .center-panel {
+            flex: 1;
+            min-width: 300px;
+            max-width: 800px;
         }
         
         input {
-            padding: 14px;
-            margin: 12px;
-            border-radius: 10px;
+            padding: 12px;
+            margin: 8px;
+            border-radius: 8px;
             border: 2px solid #4CC9F0;
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            width: 300px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #4361ee;
-            box-shadow: 0 0 15px rgba(76, 201, 240, 0.5);
-            transform: scale(1.02);
+            width: 90%;
+            font-size: 15px;
         }
         
         #gameCanvas {
             background: linear-gradient(135deg, #0a1931, #1a1a2e);
             border-radius: 15px;
             border: 4px solid #4CC9F0;
-            margin: 20px auto;
+            margin: 10px auto;
             display: block;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
         }
         
         .stats {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 12px;
             border: 2px solid #4CC9F0;
-            min-width: 220px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
-            animation: statsGlow 3s infinite alternate;
-        }
-        
-        @keyframes statsGlow {
-            from { box-shadow: 0 5px 15px rgba(76, 201, 240, 0.3); }
-            to { box-shadow: 0 5px 25px rgba(76, 201, 240, 0.6); }
+            margin-bottom: 15px;
+            text-align: left;
         }
         
         .weapon-info {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.85);
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 12px;
             border: 2px solid #ff6b6b;
-            min-width: 220px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            margin-bottom: 15px;
         }
         
-        .game-container {
-            position: relative;
-            display: inline-block;
+        .leaderboard {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px solid #4CAF50;
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
         }
         
-        h1 {
-            color: #4CC9F0;
-            margin-bottom: 30px;
-            text-shadow: 0 2px 10px rgba(76, 201, 240, 0.5);
-            font-size: 2.8em;
-            background: linear-gradient(45deg, #4CC9F0, #4361ee);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: titleGlow 2s infinite alternate;
+        .leaderboard table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
         }
         
-        @keyframes titleGlow {
-            from { filter: drop-shadow(0 0 10px rgba(76, 201, 240, 0.5)); }
-            to { filter: drop-shadow(0 0 20px rgba(76, 201, 240, 0.8)); }
+        .leaderboard th {
+            background: rgba(76, 175, 80, 0.3);
+            padding: 8px;
+            text-align: left;
+            border-bottom: 2px solid #4CAF50;
         }
         
-        h2 {
-            color: #4CC9F0;
-            margin-bottom: 20px;
-            font-size: 2em;
+        .leaderboard td {
+            padding: 6px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .error {
-            color: #ff6b6b;
-            background: rgba(255, 107, 107, 0.1);
-            padding: 12px;
-            border-radius: 8px;
-            margin: 10px auto;
-            max-width: 400px;
-            display: none;
-            animation: errorShake 0.5s;
-        }
-        
-        @keyframes errorShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+        .leaderboard tr:hover {
+            background: rgba(255, 255, 255, 0.05);
         }
         
         .health-bar {
-            width: 120px;
-            height: 12px;
+            width: 80px;
+            height: 8px;
             background: rgba(255, 0, 0, 0.3);
-            border-radius: 6px;
-            margin: 8px auto;
+            border-radius: 4px;
+            margin: 4px 0;
             overflow: hidden;
-            position: relative;
+            display: inline-block;
+            vertical-align: middle;
         }
         
         .health-fill {
             height: 100%;
             background: linear-gradient(90deg, #00ff00, #00cc00);
             width: 100%;
-            transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative;
+            transition: width 0.3s;
         }
         
-        .health-fill::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.3), 
-                transparent);
-            animation: healthShine 2s infinite;
+        h1 {
+            color: #4CC9F0;
+            margin-bottom: 20px;
+            font-size: 2.2em;
+            background: linear-gradient(45deg, #4CC9F0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
-        @keyframes healthShine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        .instructions {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 25px;
-            border-radius: 15px;
-            margin: 20px auto;
-            max-width: 600px;
-            border: 2px solid #4CC9F0;
-            backdrop-filter: blur(10px);
-        }
-        
-        .instructions h3 {
+        h2 {
             color: #4CC9F0;
             margin-bottom: 15px;
-            font-size: 1.4em;
+            font-size: 1.5em;
         }
         
-        .weapon-icon {
+        h3 {
+            color: #4CC9F0;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .error {
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px auto;
+            max-width: 400px;
+            display: none;
+        }
+        
+        .settings-section {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .setting-item {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .setting-item label {
+            cursor: pointer;
+        }
+        
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .slider {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .info-box {
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 2px solid #FFD700;
+            text-align: left;
+        }
+        
+        .info-box h3 {
+            color: #FFD700;
+        }
+        
+        .creator-badge {
             display: inline-block;
-            margin: 0 5px;
-            animation: weaponFloat 3s infinite ease-in-out;
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-left: 5px;
+            font-size: 12px;
         }
         
-        @keyframes weaponFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
+        .crown-effect {
+            position: absolute;
+            pointer-events: none;
+            z-index: 100;
+            animation: crownFloat 2s infinite ease-in-out;
+        }
+        
+        @keyframes crownFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
         }
         
         .game-message {
@@ -248,171 +268,73 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background: rgba(0, 0, 0, 0.9);
-            padding: 30px 50px;
-            border-radius: 20px;
+            padding: 20px 40px;
+            border-radius: 15px;
             border: 3px solid #4CC9F0;
-            font-size: 28px;
+            font-size: 24px;
             display: none;
-            z-index: 100;
-            animation: messagePop 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 50px rgba(76, 201, 240, 0.5);
+            z-index: 1000;
+            box-shadow: 0 0 30px rgba(76, 201, 240, 0.5);
         }
         
-        @keyframes messagePop {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        .performance-warning {
+            color: #ff9800;
+            font-size: 12px;
+            margin-top: 5px;
         }
         
-        .floating-text {
-            position: absolute;
-            pointer-events: none;
-            z-index: 50;
-            font-weight: bold;
-            animation: floatUp 1.5s ease-out forwards;
+        .weapon-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0;
         }
         
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-80px) scale(1.2); opacity: 0; }
+        .weapon-option {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
         }
         
-        .floating-coin {
-            position: absolute;
-            pointer-events: none;
-            z-index: 40;
-            animation: coinFloat 2s ease-out forwards;
+        .weapon-option:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
         
-        @keyframes coinFloat {
-            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-100px) rotate(720deg); opacity: 0; }
+        .weapon-option.selected {
+            border-color: #4CC9F0;
+            background: rgba(76, 201, 240, 0.2);
         }
         
-        .particle {
-            position: absolute;
-            pointer-events: none;
-            z-index: 30;
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
+        .tab-container {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #4CC9F0;
         }
         
-        .particle-explosion {
-            animation: particleExplode 1s ease-out forwards;
-        }
-        
-        @keyframes particleExplode {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(1) translate(var(--tx), var(--ty)); opacity: 0; }
-        }
-        
-        .trail {
-            position: absolute;
-            pointer-events: none;
-            z-index: 20;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            animation: trailFade 0.6s ease-out forwards;
-        }
-        
-        @keyframes trailFade {
-            0% { transform: scale(1); opacity: 0.7; }
-            100% { transform: scale(0.1); opacity: 0; }
-        }
-        
-        .shield-effect {
-            position: absolute;
-            pointer-events: none;
-            z-index: 25;
-            border-radius: 50%;
-            animation: shieldPulse 0.5s ease-out forwards;
-        }
-        
-        @keyframes shieldPulse {
-            0% { transform: scale(0.5); opacity: 0.8; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-        
-        .heal-effect {
-            position: absolute;
-            pointer-events: none;
-            z-index: 25;
-            animation: healRise 1s ease-out forwards;
-        }
-        
-        @keyframes healRise {
-            0% { transform: translateY(0) scale(1); opacity: 1; }
-            100% { transform: translateY(-60px) scale(1.5); opacity: 0; }
-        }
-        
-        .level-up {
-            position: absolute;
-            pointer-events: none;
-            z-index: 60;
-            animation: levelUpPop 1s ease-out forwards;
-        }
-        
-        @keyframes levelUpPop {
-            0% { transform: scale(0) rotate(0deg); opacity: 0; }
-            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
-            100% { transform: scale(1) rotate(360deg); opacity: 0; }
-        }
-        
-        .combo-text {
-            position: absolute;
-            pointer-events: none;
-            z-index: 70;
-            font-size: 36px;
-            font-weight: bold;
-            text-shadow: 0 0 10px currentColor;
-            animation: comboBounce 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
-        }
-        
-        @keyframes comboBounce {
-            0% { transform: scale(0) translateY(0); opacity: 0; }
-            50% { transform: scale(1.5) translateY(-20px); opacity: 1; }
-            100% { transform: scale(1) translateY(-40px); opacity: 0; }
-        }
-        
-        .screen-shake {
-            animation: screenShake 0.3s ease-out;
-        }
-        
-        @keyframes screenShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
-            75% { transform: translateX(-5px); }
-        }
-        
-        .slow-motion {
-            animation: slowMotion 2s ease-out;
-        }
-        
-        @keyframes slowMotion {
-            0% { filter: brightness(1) blur(0); }
-            50% { filter: brightness(1.5) blur(2px); }
-            100% { filter: brightness(1) blur(0); }
-        }
-        
-        .power-up-indicator {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.8);
+        .tab {
             padding: 10px 20px;
-            border-radius: 10px;
-            border: 2px solid gold;
-            display: none;
-            animation: powerUpGlow 1s infinite alternate;
+            cursor: pointer;
+            background: rgba(76, 201, 240, 0.2);
+            margin-right: 5px;
+            border-radius: 8px 8px 0 0;
+            transition: all 0.3s;
         }
         
-        @keyframes powerUpGlow {
-            from { box-shadow: 0 0 10px gold; }
-            to { box-shadow: 0 0 20px gold; }
+        .tab.active {
+            background: #4CC9F0;
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
@@ -420,98 +342,323 @@
     <!-- Экран меню -->
     <div id="menuScreen" class="screen active">
         <h1>⚔️ ШАРИКИ-БОЙЦЫ ⚔️</h1>
-        <p style="font-size: 1.2em; margin-bottom: 20px; color: #4CC9F0;">Все против всех! Только оружие наносит урон!</p>
+        <p style="margin-bottom: 20px; color: #4CC9F50;">Все против всех! Только оружие наносит урон!</p>
         
         <div id="errorMessage" class="error"></div>
         
-        <div style="margin: 30px 0;">
-            <input type="text" id="playerName" placeholder="Введите ваше имя" maxlength="15" value="Герой">
-        </div>
-        
-        <div style="margin: 30px 0;">
-            <button onclick="startGame()" style="background: linear-gradient(45deg, #FF416C, #FF4B2B);">
-                ⚔️ НАЧАТЬ БИТВУ
-            </button>
-            <button onclick="toggleInstructions()">📖 ИНСТРУКЦИИ</button>
-        </div>
-        
-        <div id="instructions" class="instructions" style="display: none;">
-            <h3>🎮 КАК ИГРАТЬ:</h3>
-            <p>• Шарики летают автоматически</p>
-            <p>• Собирайте оружие для нанесения урона</p>
-            <p>• Без оружия урон НЕ наносится</p>
-            <p>• Боты атакуют всех подряд</p>
-            <p>• Оружие одноразовое</p>
-            <p>• Последний выживший побеждает!</p>
-            
-            <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
-                <div style="background: rgba(128, 128, 128, 0.2); padding: 10px; border-radius: 8px;">
-                    <div style="font-size: 24px;">🔪</div>
-                    <div>Нож</div>
-                    <div style="color: #ff6b6b; font-weight: bold;">10 урона</div>
+        <div class="container">
+            <div class="left-panel">
+                <h3>👤 ИГРОК</h3>
+                <input type="text" id="playerName" placeholder="Ваше имя" maxlength="15" value="Игрок">
+                
+                <div class="settings-section">
+                    <h3>🎮 РЕЖИМ ИГРЫ</h3>
+                    <button onclick="startGame()" style="background: linear-gradient(45deg, #FF416C, #FF4B2B); width: 100%;">
+                        ⚔️ НАЧАТЬ ИГРУ
+                    </button>
+                    <button onclick="showTab('settings')" style="width: 100%; margin-top: 10px;">
+                        ⚙️ НАСТРОЙКИ
+                    </button>
                 </div>
-                <div style="background: rgba(139, 69, 19, 0.2); padding: 10px; border-radius: 8px;">
-                    <div style="font-size: 24px;">🔫</div>
-                    <div>Пистолет</div>
-                    <div style="color: #ff6b6b; font-weight: bold;">15 урона</div>
-                </div>
-                <div style="background: rgba(34, 139, 34, 0.2); padding: 10px; border-radius: 8px;">
-                    <div style="font-size: 24px;">💣</div>
-                    <div>Граната</div>
-                    <div style="color: #ff6b6b; font-weight: bold;">25 урона</div>
+                
+                <div class="info-box">
+                    <h3>📊 СТАТИСТИКА</h3>
+                    <p>💰 Монеты: <span id="totalCoinsDisplay" style="color: gold;">0</span></p>
+                    <p>🎯 Убийств: <span id="totalKillsDisplay" style="color: #ff6b6b;">0</span></p>
+                    <p>🏆 Рекорд: <span id="recordDisplay" style="color: #4CC9F0;">0</span></p>
+                    <p>👑 Побед: <span id="winsDisplay" style="color: #FFD700;">0</span></p>
                 </div>
             </div>
             
-            <button onclick="toggleInstructions()" style="margin-top: 20px;">СКРЫТЬ</button>
-        </div>
-        
-        <div style="margin-top: 40px; font-size: 1.2em; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 15px;">
-            <p>💰 Всего монет: <span id="totalCoinsDisplay" style="color: gold;">0</span></p>
-            <p>🎯 Всего убийств: <span id="totalKillsDisplay" style="color: #ff6b6b;">0</span></p>
-            <p>🏆 Рекорд убийств: <span id="recordDisplay" style="color: #4CC9F0;">0</span></p>
-            <p>👑 Побед: <span id="winsDisplay" style="color: #FFD700;">0</span></p>
+            <div class="center-panel">
+                <div class="tab-container">
+                    <div class="tab active" onclick="showTab('main')">ГЛАВНАЯ</div>
+                    <div class="tab" onclick="showTab('settings')">НАСТРОЙКИ</div>
+                    <div class="tab" onclick="showTab('info')">ИНФОРМАЦИЯ</div>
+                    <div class="tab" onclick="showTab('leaderboard')">ЛИДЕРЫ</div>
+                </div>
+                
+                <div id="tabMain" class="tab-content active">
+                    <div class="settings-section">
+                        <h3>🤖 НАСТРОЙКА БОТОВ</h3>
+                        <div class="setting-item">
+                            <label>Количество ботов:</label>
+                            <span id="botCountDisplay">6</span>
+                        </div>
+                        <input type="range" id="botCountSlider" class="slider" min="1" max="12" value="6" step="1">
+                        <p class="performance-warning">Больше ботов = меньше производительность</p>
+                        
+                        <div class="setting-item">
+                            <label>Сложность ботов:</label>
+                            <select id="botDifficulty" style="padding: 5px; border-radius: 5px; background: rgba(255,255,255,0.1); color: white; border: 1px solid #4CC9F0;">
+                                <option value="easy">Легкая</option>
+                                <option value="medium" selected>Средняя</option>
+                                <option value="hard">Сложная</option>
+                                <option value="insane">Безумная</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>🔫 ВЫБОР ОРУЖИЯ</h3>
+                        <div class="weapon-selector">
+                            <div class="weapon-option selected" data-weapon="knife" onclick="toggleWeapon('knife')">
+                                <div style="font-size: 24px;">🔪</div>
+                                <div>Нож</div>
+                                <div style="color: #ff6b6b; font-size: 12px;">10 урона</div>
+                            </div>
+                            <div class="weapon-option selected" data-weapon="pistol" onclick="toggleWeapon('pistol')">
+                                <div style="font-size: 24px;">🔫</div>
+                                <div>Пистолет</div>
+                                <div style="color: #ff6b6b; font-size: 12px;">15 урона</div>
+                            </div>
+                            <div class="weapon-option selected" data-weapon="grenade" onclick="toggleWeapon('grenade')">
+                                <div style="font-size: 24px;">💣</div>
+                                <div>Граната</div>
+                                <div style="color: #ff6b6b; font-size: 12px;">25 урона</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 12px; margin-top: 10px;">Кликните по оружию, чтобы включить/выключить его появление</p>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>⚡ НАСТРОЙКА ПРОИЗВОДИТЕЛЬНОСТИ</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="effectsEnabled" class="checkbox" checked>
+                                Эффекты частиц
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="trailsEnabled" class="checkbox" checked>
+                                Следы за шариками
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="floatingTextEnabled" class="checkbox" checked>
+                                Летающий текст
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="screenShakeEnabled" class="checkbox" checked>
+                                Тряска экрана
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="crownEffectEnabled" class="checkbox" checked>
+                                Короны создателя
+                            </label>
+                        </div>
+                        <p class="performance-warning">Отключите эффекты для лучшей производительности</p>
+                    </div>
+                </div>
+                
+                <div id="tabSettings" class="tab-content">
+                    <div class="settings-section">
+                        <h3>🎮 УПРАВЛЕНИЕ</h3>
+                        <p>• Шарики летают автоматически</p>
+                        <p>• Собирайте оружие для нанесения урона</p>
+                        <p>• Без оружия урон НЕ наносится</p>
+                        <p>• Боты атакуют всех подряд</p>
+                        <p>• Оружие одноразовое</p>
+                        <p>• Отскок от стенок включен</p>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>🔧 ДОПОЛНИТЕЛЬНО</h3>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="autoCollectEnabled" class="checkbox" checked>
+                                Автоподбор оружия
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="powerUpsEnabled" class="checkbox" checked>
+                                Баффы на арене
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="botFriendlyFire" class="checkbox" checked>
+                                Боты атакуют друг друга
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label>
+                                <input type="checkbox" id="wallBounceEnabled" class="checkbox" checked>
+                                Отскок от стенок
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button onclick="resetSettings()" style="background: linear-gradient(45deg, #ff6b6b, #ee5a52);">
+                        🔄 Сбросить настройки
+                    </button>
+                </div>
+                
+                <div id="tabInfo" class="tab-content">
+                    <div class="info-box">
+                        <h3>🎮 ОБ ИГРЕ</h3>
+                        <p><strong>Шарики-Бойцы: Все против всех!</strong></p>
+                        <p>Игра создана в 2026 году</p>
+                        <p>Автор: <span style="color: #FFD700; font-weight: bold;">Jekapro2013</span></p>
+                        
+                        <div style="margin-top: 15px; padding: 10px; background: rgba(255, 215, 0, 0.1); border-radius: 8px;">
+                            <p style="color: #FFD700;">✨ Особенность создателя:</p>
+                            <p>Если имя шарика "Jekapro2013", от него будут отлетать короны!</p>
+                            <p>Это работает даже если эффекты отключены в настройках.</p>
+                            <p>В таблице лидеров создатель отмечен <span class="creator-badge">СОЗДАТЕЛЬ</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-section">
+                        <h3>📱 УПРАВЛЕНИЕ</h3>
+                        <p><strong>ESC</strong> - Пауза/Продолжить</p>
+                        <p><strong>R</strong> - Перезапустить игру</p>
+                        <p><strong>+/-</strong> - Добавить/убрать бота</p>
+                        <p><strong>F</strong> - Полноэкранный режим</p>
+                    </div>
+                </div>
+                
+                <div id="tabLeaderboard" class="tab-content">
+                    <div class="leaderboard">
+                        <h3>🏆 ЛУЧШИЕ ИГРОКИ</h3>
+                        <table id="globalLeaderboard">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Игрок</th>
+                                    <th>Убийства</th>
+                                    <th>Монеты</th>
+                                    <th>Победы</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Заполняется из localStorage -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <button onclick="clearLeaderboard()" style="background: linear-gradient(45deg, #808080, #666);">
+                        🗑️ Очистить таблицу
+                    </button>
+                </div>
+            </div>
+            
+            <div class="right-panel">
+                <div class="stats">
+                    <h3>📈 ТЕКУЩАЯ СЕССИЯ</h3>
+                    <p>Текущие убийства: <span id="sessionKills">0</span></p>
+                    <p>Лучшее комбо: <span id="sessionCombo">0</span></p>
+                    <p>Время игры: <span id="sessionTime">0:00</span></p>
+                </div>
+                
+                <div class="leaderboard">
+                    <h3>🎯 БЫСТРЫЕ РЕЗУЛЬТАТЫ</h3>
+                    <div id="quickStats">
+                        <!-- Заполняется во время игры -->
+                    </div>
+                </div>
+                
+                <button onclick="showTab('info')" style="width: 100%; margin-top: 10px;">
+                    ℹ️ Помощь
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Экран игры -->
     <div id="gameScreen" class="screen">
-        <div class="game-container">
-            <div id="powerUpIndicator" class="power-up-indicator">
-                ⚡ СИЛОВОЕ ПОЛЕ АКТИВНО!
-            </div>
-            
-            <div class="stats">
-                <p style="color: #4CC9F0; font-weight: bold;">👤 <span id="playerNameDisplay"></span></p>
-                <p>❤️ ЗДОРОВЬЕ: <span id="healthDisplay">100</span></p>
-                <div class="health-bar">
-                    <div id="healthBarFill" class="health-fill"></div>
+        <div class="container">
+            <div class="left-panel">
+                <div class="stats">
+                    <h3>👤 ИГРОК</h3>
+                    <p id="playerNameDisplay"></p>
+                    <p>❤️ Здоровье: <span id="healthDisplay">100</span></p>
+                    <div class="health-bar">
+                        <div id="healthBarFill" class="health-fill"></div>
+                    </div>
+                    <p>💰 Монеты: <span id="coinsDisplay" style="color: gold;">0</span></p>
+                    <p>🎯 Убийств: <span id="killsDisplay" style="color: #4CC9F0;">0</span></p>
+                    <p>🔥 Комбо: <span id="comboDisplay" style="color: #FF416C;">0</span></p>
                 </div>
-                <p>💰 МОНЕТЫ: <span id="coinsDisplay" style="color: gold;">0</span></p>
-                <p>🎯 ВРАГОВ: <span id="enemiesDisplay" style="color: #ff6b6b;">8</span></p>
-                <p>⚔️ УБИЙСТВ: <span id="killsDisplay" style="color: #4CC9F0;">0</span></p>
-                <p>🔥 СЕРИЯ: <span id="comboDisplay" style="color: #FF416C;">0</span></p>
+                
+                <div class="weapon-info">
+                    <h3>🔫 ОРУЖИЕ</h3>
+                    <p>Тип: <span id="weaponDisplay" style="color: #ff6b6b;">Нет</span></p>
+                    <p>Патроны: <span id="ammoDisplay">-</span></p>
+                    <p>Урон: <span id="damageDisplay">-</span></p>
+                </div>
+                
+                <div class="settings-section">
+                    <h3>⚙️ БЫСТРЫЕ НАСТРОЙКИ</h3>
+                    <div class="setting-item">
+                        <label>Ботов: <span id="gameBotCount">6</span></label>
+                        <div>
+                            <button onclick="changeBotCount(-1)" style="padding: 5px 10px;">-</button>
+                            <button onclick="changeBotCount(1)" style="padding: 5px 10px;">+</button>
+                        </div>
+                    </div>
+                    <button onclick="togglePause()" id="pauseBtn" style="width: 100%;">
+                        ⏸️ ПАУЗА
+                    </button>
+                </div>
             </div>
             
-            <div class="weapon-info">
-                <p>🔫 ОРУЖИЕ: <span id="weaponDisplay" style="color: #ff6b6b; font-weight: bold;">НЕТ</span></p>
-                <p>🎯 ПАТРОНЫ: <span id="ammoDisplay" style="color: #4CC9F0;">-</span></p>
-                <p>💥 УРОН: <span id="damageDisplay" style="color: #ff6b6b;">-</span></p>
-                <p>⏱️ ПЕРЕЗАРЯДКА: <span id="cooldownDisplay">-</span></p>
+            <div class="center-panel">
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
+                
+                <div style="margin-top: 15px;">
+                    <button onclick="togglePause()">⏸️ ПАУЗА</button>
+                    <button onclick="exitToMenu()" style="background: linear-gradient(45deg, #ff6b6b, #ee5a52);">
+                        🏠 В МЕНЮ
+                    </button>
+                    <button onclick="addBot()" style="background: linear-gradient(45deg, #06d6a0, #118ab2);">
+                        🤖 +БОТ
+                    </button>
+                    <button onclick="removeBot()" style="background: linear-gradient(45deg, #808080, #666);">
+                        🤖 -БОТ
+                    </button>
+                </div>
+                
+                <div id="gameMessage" class="game-message"></div>
             </div>
             
-            <canvas id="gameCanvas" width="800" height="600"></canvas>
-            
-            <div style="margin: 20px;">
-                <button onclick="togglePause()" id="pauseBtn">⏸️ ПАУЗА</button>
-                <button onclick="exitToMenu()" style="background: linear-gradient(45deg, #ff6b6b, #ee5a52);">
-                    🏠 В МЕНЮ
+            <div class="right-panel">
+                <div class="leaderboard">
+                    <h3>🏆 ТАБЛИЦА ЛИДЕРОВ</h3>
+                    <table id="gameLeaderboard">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Имя</th>
+                                <th>Урон</th>
+                                <th>ХП</th>
+                                <th>Убийства</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Заполняется во время игры -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="stats">
+                    <h3>📊 ИНФОРМАЦИЯ</h3>
+                    <p>Врагов: <span id="enemiesDisplay" style="color: #ff6b6b;">6</span></p>
+                    <p>Оружия на карте: <span id="weaponsDisplay">0</span></p>
+                    <p>Время: <span id="gameTimeDisplay">0:00</span></p>
+                    <p>ФПС: <span id="fpsDisplay">60</span></p>
+                </div>
+                
+                <button onclick="showControls()" style="width: 100%; margin-top: 10px;">
+                    🎮 Управление
                 </button>
-                <button onclick="addBot()" style="background: linear-gradient(45deg, #06d6a0, #118ab2);">
-                    🤖 +БОТ
-                </button>
             </div>
-            
-            <div id="gameMessage" class="game-message"></div>
         </div>
     </div>
 
@@ -519,10 +666,29 @@
     <div id="pauseScreen" class="screen">
         <h2>⏸️ ИГРА НА ПАУЗЕ</h2>
         <div style="margin: 30px 0;">
-            <button onclick="togglePause()" style="background: linear-gradient(45deg, #4CAF50, #2E7D32);">
+            <button onclick="togglePause()" style="background: linear-gradient(45deg, #4CAF50, #2E7D32); padding: 15px 30px;">
                 ▶️ ПРОДОЛЖИТЬ
             </button>
-            <button onclick="exitToMenu()">🏠 В МЕНЮ</button>
+            <button onclick="exitToMenu()" style="padding: 15px 30px;">🏠 В МЕНЮ</button>
+        </div>
+        
+        <div class="container" style="max-width: 600px; margin: 20px auto;">
+            <div class="settings-section">
+                <h3>⚡ НАСТРОЙКИ ПРОИЗВОДИТЕЛЬНОСТИ</h3>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="pauseEffectsEnabled" class="checkbox" checked>
+                        Эффекты частиц
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="pauseTrailsEnabled" class="checkbox" checked>
+                        Следы за шариками
+                    </label>
+                </div>
+                <p class="performance-warning">Изменения вступят в силу после продолжения игры</p>
+            </div>
         </div>
     </div>
 
@@ -540,34 +706,52 @@
             particles: [],
             trails: [],
             floatingTexts: [],
+            crowns: [],
             coins: 0,
             kills: 0,
             totalKills: 0,
             wins: 0,
             record: 0,
-            playerName: 'Герой',
+            playerName: 'Игрок',
             gameTime: 0,
             combo: 0,
             comboTime: 0,
             lastComboTime: 0,
-            powerUpActive: false,
-            powerUpEndTime: 0,
-            screenShake: 0
+            screenShake: 0,
+            fps: 60,
+            lastFrameTime: 0,
+            frameCount: 0,
+            leaderboard: [],
+            sessionStartTime: 0,
+            botCount: 6,
+            enabledWeapons: new Set(['knife', 'pistol', 'grenade']),
+            settings: {
+                effects: true,
+                trails: true,
+                floatingText: true,
+                screenShake: true,
+                crownEffect: true,
+                autoCollect: true,
+                powerUps: true,
+                botFriendlyFire: true,
+                wallBounce: true,
+                botDifficulty: 'medium'
+            }
         };
 
         // Типы оружия
         const WEAPON_TYPES = {
-            KNIFE: { name: '🔪 Нож', color: '#808080', damage: 10, ammo: 1, range: 60, speed: 1.0 },
-            PISTOL: { name: '🔫 Пистолет', color: '#8B4513', damage: 15, ammo: 1, range: 120, speed: 0.8 },
-            GRENADE: { name: '💣 Граната', color: '#228B22', damage: 25, ammo: 1, range: 150, speed: 0.6 }
+            KNIFE: { id: 'knife', name: '🔪 Нож', color: '#808080', damage: 10, ammo: 1, range: 60, speed: 1.0 },
+            PISTOL: { id: 'pistol', name: '🔫 Пистолет', color: '#8B4513', damage: 15, ammo: 1, range: 120, speed: 0.8 },
+            GRENADE: { id: 'grenade', name: '💣 Граната', color: '#228B22', damage: 25, ammo: 1, range: 150, speed: 0.6 }
         };
 
         // Цвета для шариков
         const BALL_COLORS = [
-            '#4CC9F0', '#4361ee', '#3a0ca3', '#7209b7', // Игрок и синие
-            '#ff6b6b', '#ff9e6d', '#ffd166', '#ef476f', // Красные/оранжевые
-            '#06d6a0', '#118ab2', '#073b4c', '#ff9e00', // Зеленые/бирюзовые
-            '#9d4edd', '#c77dff', '#e0aaff', '#ff5d8f'  // Фиолетовые/розовые
+            '#4CC9F0', '#4361ee', '#3a0ca3', '#7209b7',
+            '#ff6b6b', '#ff9e6d', '#ffd166', '#ef476f',
+            '#06d6a0', '#118ab2', '#073b4c', '#ff9e00',
+            '#9d4edd', '#c77dff', '#e0aaff', '#ff5d8f'
         ];
 
         // Инициализация при загрузке
@@ -576,17 +760,25 @@
             
             // Загружаем сохраненные данные
             loadGameData();
+            loadSettings();
+            loadLeaderboard();
             
             // Инициализируем canvas
             game.canvas = document.getElementById('gameCanvas');
             game.ctx = game.canvas.getContext('2d');
+            
+            // Настройка управления
+            setupControls();
+            
+            // Обновляем отображение настроек
+            updateSettingsDisplay();
             
             console.log('Игра готова');
         };
 
         // Загрузить данные игры
         function loadGameData() {
-            const savedData = localStorage.getItem('ballFightersUltimate');
+            const savedData = localStorage.getItem('ballFightersData');
             if (savedData) {
                 try {
                     const data = JSON.parse(savedData);
@@ -601,16 +793,97 @@
             }
         }
 
-        // Сохранить данные игры
-        function saveGameData() {
-            const data = {
-                coins: game.coins,
-                totalKills: game.totalKills,
-                record: game.record,
-                wins: game.wins,
-                playerName: game.playerName
+        // Загрузить настройки
+        function loadSettings() {
+            const savedSettings = localStorage.getItem('ballFightersSettings');
+            if (savedSettings) {
+                try {
+                    const settings = JSON.parse(savedSettings);
+                    Object.assign(game.settings, settings);
+                    
+                    // Загружаем включенное оружие
+                    if (settings.enabledWeapons) {
+                        game.enabledWeapons = new Set(settings.enabledWeapons);
+                    }
+                    
+                    // Загружаем количество ботов
+                    if (settings.botCount) {
+                        game.botCount = settings.botCount;
+                        document.getElementById('botCountSlider').value = game.botCount;
+                        document.getElementById('botCountDisplay').textContent = game.botCount;
+                    }
+                    
+                    // Загружаем сложность
+                    if (settings.botDifficulty) {
+                        document.getElementById('botDifficulty').value = settings.botDifficulty;
+                        game.settings.botDifficulty = settings.botDifficulty;
+                    }
+                } catch(e) {
+                    console.log('Ошибка загрузки настроек:', e);
+                }
+            }
+        }
+
+        // Сохранить настройки
+        function saveSettings() {
+            const settings = {
+                ...game.settings,
+                enabledWeapons: Array.from(game.enabledWeapons),
+                botCount: game.botCount,
+                botDifficulty: game.settings.botDifficulty
             };
-            localStorage.setItem('ballFightersUltimate', JSON.stringify(data));
+            localStorage.setItem('ballFightersSettings', JSON.stringify(settings));
+        }
+
+        // Загрузить таблицу лидеров
+        function loadLeaderboard() {
+            const savedLeaderboard = localStorage.getItem('ballFightersLeaderboard');
+            if (savedLeaderboard) {
+                try {
+                    game.leaderboard = JSON.parse(savedLeaderboard);
+                    updateGlobalLeaderboard();
+                } catch(e) {
+                    console.log('Ошибка загрузки таблицы лидеров:', e);
+                }
+            }
+        }
+
+        // Сохранить таблицу лидеров
+        function saveLeaderboard() {
+            localStorage.setItem('ballFightersLeaderboard', JSON.stringify(game.leaderboard));
+        }
+
+        // Обновить глобальную таблицу лидеров
+        function updateGlobalLeaderboard() {
+            const tbody = document.querySelector('#globalLeaderboard tbody');
+            tbody.innerHTML = '';
+            
+            // Сортируем по убийствам
+            const sorted = [...game.leaderboard].sort((a, b) => b.kills - a.kills);
+            
+            sorted.slice(0, 10).forEach((player, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        ${player.name}
+                        ${player.name === 'Jekapro2013' ? '<span class="creator-badge">СОЗДАТЕЛЬ</span>' : ''}
+                    </td>
+                    <td>${player.kills}</td>
+                    <td>${player.coins}</td>
+                    <td>${player.wins || 0}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Очистить таблицу лидеров
+        function clearLeaderboard() {
+            if (confirm('Вы уверены, что хотите очистить таблицу лидеров?')) {
+                game.leaderboard = [];
+                saveLeaderboard();
+                updateGlobalLeaderboard();
+            }
         }
 
         // Обновить статистику в меню
@@ -621,10 +894,218 @@
             document.getElementById('winsDisplay').textContent = game.wins;
         }
 
-        // Показать/скрыть инструкции
-        function toggleInstructions() {
-            const instructions = document.getElementById('instructions');
-            instructions.style.display = instructions.style.display === 'none' ? 'block' : 'none';
+        // Показать вкладку
+        function showTab(tabName) {
+            // Убираем активный класс у всех вкладок
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Активируем выбранную вкладку
+            document.querySelector(`[onclick="showTab('${tabName}')"]`).classList.add('active');
+            document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add('active');
+        }
+
+        // Переключить оружие
+        function toggleWeapon(weaponId) {
+            const option = document.querySelector(`.weapon-option[data-weapon="${weaponId}"]`);
+            
+            if (game.enabledWeapons.has(weaponId)) {
+                game.enabledWeapons.delete(weaponId);
+                option.classList.remove('selected');
+            } else {
+                game.enabledWeapons.add(weaponId);
+                option.classList.add('selected');
+            }
+            
+            saveSettings();
+        }
+
+        // Обновить отображение настроек
+        function updateSettingsDisplay() {
+            // Оружие
+            document.querySelectorAll('.weapon-option').forEach(option => {
+                const weaponId = option.dataset.weapon;
+                if (game.enabledWeapons.has(weaponId)) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+            
+            // Количество ботов
+            document.getElementById('botCountSlider').value = game.botCount;
+            document.getElementById('botCountDisplay').textContent = game.botCount;
+            
+            // Чекбоксы
+            document.getElementById('effectsEnabled').checked = game.settings.effects;
+            document.getElementById('trailsEnabled').checked = game.settings.trails;
+            document.getElementById('floatingTextEnabled').checked = game.settings.floatingText;
+            document.getElementById('screenShakeEnabled').checked = game.settings.screenShake;
+            document.getElementById('crownEffectEnabled').checked = game.settings.crownEffect;
+            document.getElementById('autoCollectEnabled').checked = game.settings.autoCollect;
+            document.getElementById('powerUpsEnabled').checked = game.settings.powerUps;
+            document.getElementById('botFriendlyFire').checked = game.settings.botFriendlyFire;
+            document.getElementById('wallBounceEnabled').checked = game.settings.wallBounce;
+            
+            // Сложность
+            document.getElementById('botDifficulty').value = game.settings.botDifficulty;
+        }
+
+        // Сбросить настройки
+        function resetSettings() {
+            if (confirm('Сбросить все настройки к значениям по умолчанию?')) {
+                game.settings = {
+                    effects: true,
+                    trails: true,
+                    floatingText: true,
+                    screenShake: true,
+                    crownEffect: true,
+                    autoCollect: true,
+                    powerUps: true,
+                    botFriendlyFire: true,
+                    wallBounce: true,
+                    botDifficulty: 'medium'
+                };
+                
+                game.enabledWeapons = new Set(['knife', 'pistol', 'grenade']);
+                game.botCount = 6;
+                
+                localStorage.removeItem('ballFightersSettings');
+                updateSettingsDisplay();
+            }
+        }
+
+        // Настройка управления
+        function setupControls() {
+            // Клавиша паузы
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    togglePause();
+                }
+                
+                // Добавление/удаление ботов
+                if (e.key === '+' || e.key === '=') {
+                    if (game.running && !game.paused) {
+                        addBot();
+                    }
+                }
+                
+                if (e.key === '-' || e.key === '_') {
+                    if (game.running && !game.paused) {
+                        removeBot();
+                    }
+                }
+                
+                // Рестарт
+                if (e.key === 'r' || e.key === 'R') {
+                    if (game.running && !game.paused) {
+                        if (confirm('Перезапустить игру?')) {
+                            exitToMenu();
+                            startGame();
+                        }
+                    }
+                }
+                
+                // Полноэкранный режим
+                if (e.key === 'f' || e.key === 'F') {
+                    toggleFullscreen();
+                }
+            });
+            
+            // Слайдер количества ботов
+            document.getElementById('botCountSlider').addEventListener('input', (e) => {
+                game.botCount = parseInt(e.target.value);
+                document.getElementById('botCountDisplay').textContent = game.botCount;
+                saveSettings();
+            });
+            
+            // Чекбоксы настроек
+            document.getElementById('effectsEnabled').addEventListener('change', (e) => {
+                game.settings.effects = e.target.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('trailsEnabled').addEventListener('change', (e) => {
+                game.settings.trails = e.target.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('floatingTextEnabled').addEventListener('change', (e) => {
+                game.settings.floatingText = e.target.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('screenShakeEnabled').addEventListener('change', (e) => {
+                game.settings.screenShake = e.target.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('crownEffectEnabled').addEventListener('change', (e) => {
+                game.settings.crownEffect = e.target.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('autoCollectEnabled').addEventListener('change', (e) => {
+                game.settings.autoCollect = e.target.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('powerUpsEnabled').addEventListener('change', (e) => {
+                game.settings.powerUps = e.target.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('botFriendlyFire').addEventListener('change', (e) => {
+                game.settings.botFriendlyFire = e.target.checked;
+                saveSettings();
+            });
+            
+            document.getElementById('wallBounceEnabled').addEventListener('change', (e) => {
+                game.settings.wallBounce = e.target.checked;
+                saveSettings();
+            });
+            
+            // Сложность ботов
+            document.getElementById('botDifficulty').addEventListener('change', (e) => {
+                game.settings.botDifficulty = e.target.value;
+                saveSettings();
+            });
+        }
+
+        // Показать управление
+        function showControls() {
+            alert(`
+🎮 УПРАВЛЕНИЕ В ИГРЕ:
+
+• Шарики летают автоматически
+• Собирайте оружие для атаки
+• Без оружия урон не наносится
+• Боты атакуют всех подряд
+
+ГОРЯЧИЕ КЛАВИШИ:
+ESC - Пауза/Продолжить
+R - Перезапустить игру
++/- - Добавить/убрать бота
+F - Полноэкранный режим
+            `);
+        }
+
+        // Полноэкранный режим
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(err => {
+                    console.log(`Ошибка включения полноэкранного режима: ${err.message}`);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
         }
 
         // Начать игру
@@ -636,6 +1117,14 @@
             }
             
             game.playerName = nameInput;
+            
+            // Загружаем актуальные настройки из чекбоксов паузы
+            if (document.getElementById('pauseEffectsEnabled')) {
+                game.settings.effects = document.getElementById('pauseEffectsEnabled').checked;
+            }
+            if (document.getElementById('pauseTrailsEnabled')) {
+                game.settings.trails = document.getElementById('pauseTrailsEnabled').checked;
+            }
             
             // Переключаем экраны
             document.getElementById('menuScreen').classList.remove('active');
@@ -661,7 +1150,7 @@
             game.player = {
                 x: 0,
                 y: 0,
-                radius: 35,
+                radius: 32,
                 color: BALL_COLORS[0],
                 health: 100,
                 maxHealth: 100,
@@ -674,25 +1163,28 @@
                 lastHitTime: 0,
                 damageEffect: 0,
                 trailTimer: 0,
-                shield: false,
-                shieldEndTime: 0,
-                killStreak: 0
+                killStreak: 0,
+                totalDamage: 0,
+                kills: 0
             };
             
             // Создаем врагов
-            createEnemies(8);
+            createEnemies(game.botCount);
             
-            // Сбрасываем оружие и эффекты
+            // Сбрасываем игровые данные
             game.weapons = [];
             game.effects = [];
             game.particles = [];
             game.trails = [];
             game.floatingTexts = [];
+            game.crowns = [];
             game.kills = 0;
             game.combo = 0;
             game.gameTime = 0;
-            game.powerUpActive = false;
             game.screenShake = 0;
+            game.frameCount = 0;
+            game.lastFrameTime = performance.now();
+            game.sessionStartTime = Date.now();
             
             // Обновляем интерфейс
             updateGameUI();
@@ -709,12 +1201,8 @@
             setInterval(() => {
                 if (game.running && !game.paused) {
                     spawnWeapon();
-                    // Шанс на спавн баффа
-                    if (Math.random() < 0.1) {
-                        spawnPowerUp();
-                    }
                 }
-            }, 4000); // Новое оружие каждые 4 секунды
+            }, 5000);
             
             console.log('Игра началась');
         }
@@ -723,6 +1211,16 @@
         function createEnemies(count) {
             game.enemies = [];
             
+            // Настройки сложности
+            const difficultySettings = {
+                easy: { speed: 2.0, aggression: 0.3, accuracy: 0.3 },
+                medium: { speed: 2.5, aggression: 0.5, accuracy: 0.5 },
+                hard: { speed: 3.0, aggression: 0.7, accuracy: 0.7 },
+                insane: { speed: 3.5, aggression: 0.9, accuracy: 0.9 }
+            };
+            
+            const settings = difficultySettings[game.settings.botDifficulty] || difficultySettings.medium;
+            
             for (let i = 0; i < count; i++) {
                 const angle = (i / count) * Math.PI * 2;
                 const distance = 180;
@@ -730,11 +1228,11 @@
                 game.enemies.push({
                     x: Math.cos(angle) * distance,
                     y: Math.sin(angle) * distance,
-                    radius: 30 + Math.random() * 10,
+                    radius: 30 + Math.random() * 8,
                     color: BALL_COLORS[4 + (i % 12)],
                     health: 100,
                     maxHealth: 100,
-                    speed: 2.5 + Math.random() * 2,
+                    speed: settings.speed,
                     vx: (Math.random() - 0.5) * 3.5,
                     vy: (Math.random() - 0.5) * 3.5,
                     name: ['Злой', 'Хитрый', 'Сильный', 'Быстрый', 'Умный', 'Страшный', 'Ловкий', 'Жестокий'][i % 8] + ' Бот',
@@ -742,29 +1240,54 @@
                     isPlayer: false,
                     aiTimer: 0,
                     target: null,
-                    aggression: 0.5 + Math.random() * 0.5,
+                    aggression: settings.aggression,
+                    accuracy: settings.accuracy,
                     lastAttackTime: 0,
                     attackCooldown: 1000 + Math.random() * 2000,
                     lastHitTime: 0,
                     damageEffect: 0,
                     trailTimer: 0,
-                    killStreak: 0
+                    killStreak: 0,
+                    totalDamage: 0,
+                    kills: 0
                 });
             }
+        }
+
+        // Изменить количество ботов
+        function changeBotCount(delta) {
+            if (!game.running || game.paused) return;
+            
+            if (delta > 0 && game.enemies.length < 15) {
+                addBot();
+            } else if (delta < 0 && game.enemies.length > 1) {
+                removeBot();
+            }
+            
+            document.getElementById('gameBotCount').textContent = game.enemies.length;
         }
 
         // Добавить бота
         function addBot() {
             if (!game.running || game.paused || game.enemies.length >= 15) return;
             
+            const difficultySettings = {
+                easy: { speed: 2.0, aggression: 0.3, accuracy: 0.3 },
+                medium: { speed: 2.5, aggression: 0.5, accuracy: 0.5 },
+                hard: { speed: 3.0, aggression: 0.7, accuracy: 0.7 },
+                insane: { speed: 3.5, aggression: 0.9, accuracy: 0.9 }
+            };
+            
+            const settings = difficultySettings[game.settings.botDifficulty] || difficultySettings.medium;
+            
             const newBot = {
                 x: (Math.random() - 0.5) * 300,
                 y: (Math.random() - 0.5) * 300,
-                radius: 30 + Math.random() * 10,
+                radius: 30 + Math.random() * 8,
                 color: BALL_COLORS[4 + Math.floor(Math.random() * 12)],
                 health: 100,
                 maxHealth: 100,
-                speed: 2.5 + Math.random() * 2,
+                speed: settings.speed,
                 vx: (Math.random() - 0.5) * 3.5,
                 vy: (Math.random() - 0.5) * 3.5,
                 name: ['Новый', 'Свежий', 'Дополнительный', 'Экстра'][Math.floor(Math.random() * 4)] + ' Бот',
@@ -772,17 +1295,39 @@
                 isPlayer: false,
                 aiTimer: 0,
                 target: null,
-                aggression: 0.5 + Math.random() * 0.5,
+                aggression: settings.aggression,
+                accuracy: settings.accuracy,
                 lastAttackTime: 0,
                 attackCooldown: 1000 + Math.random() * 2000,
                 lastHitTime: 0,
                 damageEffect: 0,
                 trailTimer: 0,
-                killStreak: 0
+                killStreak: 0,
+                totalDamage: 0,
+                kills: 0
             };
             
             game.enemies.push(newBot);
-            createSpawnEffect(newBot.x, newBot.y, newBot.color);
+            
+            // Эффект спавна
+            if (game.settings.effects) {
+                createSpawnEffect(newBot.x, newBot.y, newBot.color);
+            }
+            
+            updateGameUI();
+        }
+
+        // Удалить бота
+        function removeBot() {
+            if (!game.running || game.paused || game.enemies.length <= 1) return;
+            
+            const removedBot = game.enemies.pop();
+            
+            // Эффект удаления
+            if (game.settings.effects) {
+                createDeathEffect(removedBot);
+            }
+            
             updateGameUI();
         }
 
@@ -790,8 +1335,14 @@
         function spawnWeapon() {
             if (!game.running || game.paused || game.weapons.length >= 8) return;
             
-            const weaponTypes = Object.values(WEAPON_TYPES);
-            const weaponType = weaponTypes[Math.floor(Math.random() * weaponTypes.length)];
+            // Фильтруем доступные типы оружия
+            const availableWeapons = Object.values(WEAPON_TYPES).filter(w => 
+                game.enabledWeapons.has(w.id)
+            );
+            
+            if (availableWeapons.length === 0) return;
+            
+            const weaponType = availableWeapons[Math.floor(Math.random() * availableWeapons.length)];
             
             // Находим свободную позицию
             let x, y;
@@ -818,54 +1369,10 @@
                 };
                 
                 game.weapons.push(weapon);
-                createSpawnEffect(x, y, weapon.color);
                 
-                // Перестаем мигать через 1.5 секунды
-                setTimeout(() => {
-                    const w = game.weapons.find(w => w.id === weapon.id);
-                    if (w) w.blink = false;
-                }, 1500);
-            }
-        }
-
-        // Спавн баффа
-        function spawnPowerUp() {
-            if (!game.running || game.paused) return;
-            
-            const powerUps = [
-                { type: 'shield', color: '#4CC9F0', name: '🛡️ Щит', duration: 10000 },
-                { type: 'heal', color: '#4CAF50', name: '❤️ Лечение', amount: 30 },
-                { type: 'speed', color: '#FF9800', name: '⚡ Скорость', multiplier: 1.5, duration: 8000 }
-            ];
-            
-            const powerUp = powerUps[Math.floor(Math.random() * powerUps.length)];
-            
-            // Находим свободную позицию
-            let x, y;
-            let attempts = 0;
-            const maxAttempts = 30;
-            
-            do {
-                const angle = Math.random() * Math.PI * 2;
-                const distance = Math.random() * 150;
-                x = Math.cos(angle) * distance;
-                y = Math.sin(angle) * distance;
-                attempts++;
-            } while (isTooCloseToEntity(x, y, 30) && attempts < maxAttempts);
-            
-            if (attempts < maxAttempts) {
-                game.effects.push({
-                    type: 'powerUp',
-                    x: x,
-                    y: y,
-                    color: powerUp.color,
-                    powerUp: powerUp,
-                    life: 300, // 5 секунд при 60 FPS
-                    rotation: 0,
-                    size: 25
-                });
-                
-                createPowerUpSpawnEffect(x, y, powerUp.color);
+                if (game.settings.effects) {
+                    createSpawnEffect(x, y, weapon.color);
+                }
             }
         }
 
@@ -896,23 +1403,21 @@
                 }
             }
             
-            // Проверяем другие эффекты
-            for (const effect of game.effects) {
-                if (effect.type === 'powerUp') {
-                    const dx = effect.x - x;
-                    const dy = effect.y - y;
-                    if (Math.sqrt(dx*dx + dy*dy) < radius + 25) {
-                        return true;
-                    }
-                }
-            }
-            
             return false;
         }
 
         // Игровой цикл
         function gameLoop() {
             if (!game.running || game.paused) return;
+            
+            // Расчет FPS
+            const now = performance.now();
+            game.frameCount++;
+            if (now >= game.lastFrameTime + 1000) {
+                game.fps = Math.round((game.frameCount * 1000) / (now - game.lastFrameTime));
+                game.frameCount = 0;
+                game.lastFrameTime = now;
+            }
             
             // Увеличиваем время игры
             game.gameTime++;
@@ -926,6 +1431,9 @@
             // Отрисовка
             drawGame();
             
+            // Обновление короны создателя (всегда, независимо от настроек)
+            updateCreatorCrown();
+            
             // Следующий кадр
             requestAnimationFrame(gameLoop);
         }
@@ -933,13 +1441,40 @@
         // Обновить комбо
         function updateCombo() {
             const now = Date.now();
-            if (now - game.lastComboTime > 3000) { // 3 секунды без убийств сбрасывает комбо
-                if (game.combo > 1) {
+            if (now - game.lastComboTime > 3000) {
+                if (game.combo > 1 && game.settings.floatingText) {
                     createComboResetEffect();
                 }
                 game.combo = 0;
             }
             game.comboTime = now;
+        }
+
+        // Обновление короны создателя
+        function updateCreatorCrown() {
+            // Создаем короны для Jekapro2013 (всегда, даже если эффекты отключены)
+            if (game.player.name === 'Jekapro2013') {
+                game.crowns.push({
+                    x: game.player.x + (Math.random() - 0.5) * 60,
+                    y: game.player.y - 40 + (Math.random() - 0.5) * 20,
+                    size: 20 + Math.random() * 10,
+                    life: 60,
+                    rotation: Math.random() * Math.PI * 2,
+                    rotationSpeed: (Math.random() - 0.5) * 0.1
+                });
+            }
+            
+            // Обновляем существующие короны
+            for (let i = game.crowns.length - 1; i >= 0; i--) {
+                const crown = game.crowns[i];
+                crown.life--;
+                crown.rotation += crown.rotationSpeed;
+                crown.y -= 0.5;
+                
+                if (crown.life <= 0) {
+                    game.crowns.splice(i, 1);
+                }
+            }
         }
 
         // Обновление игры
@@ -951,13 +1486,13 @@
             // Обновление ИИ ботов
             updateBotAI();
             
-            // Проверка сбора оружия и баффов
+            // Проверка сбора оружия
             checkPickups();
             
             // Проверка использования оружия
             checkWeaponUsage();
             
-            // Проверка столкновений (без урона!)
+            // Проверка столкновений
             checkCollisions();
             
             // Обновление эффектов
@@ -982,6 +1517,7 @@
             
             // Обновление интерфейса
             updateGameUI();
+            updateLeaderboard();
             
             // Обновление тряски экрана
             if (game.screenShake > 0) {
@@ -995,8 +1531,12 @@
             entity.x += entity.vx;
             entity.y += entity.vy;
             
-            // Ограничение в пределах арены
-            keepInArena(entity);
+            // Ограничение в пределах арены с отскоком
+            if (game.settings.wallBounce) {
+                keepInArenaWithBounce(entity);
+            } else {
+                keepInArena(entity);
+            }
             
             // Случайное изменение направления
             if (Math.random() < 0.01) {
@@ -1005,10 +1545,9 @@
                 
                 // Ограничение скорости
                 const speed = Math.sqrt(entity.vx*entity.vx + entity.vy*entity.vy);
-                const maxSpeed = entity.shield ? entity.speed * 1.5 : entity.speed;
-                if (speed > maxSpeed) {
-                    entity.vx = (entity.vx / speed) * maxSpeed;
-                    entity.vy = (entity.vy / speed) * maxSpeed;
+                if (speed > entity.speed) {
+                    entity.vx = (entity.vx / speed) * entity.speed;
+                    entity.vy = (entity.vy / speed) * entity.speed;
                 }
             }
             
@@ -1018,17 +1557,60 @@
                 if (entity.damageEffect < 0) entity.damageEffect = 0;
             }
             
-            // Обновление щита
-            if (entity.shield && Date.now() > entity.shieldEndTime) {
-                entity.shield = false;
-                createShieldEndEffect(entity);
-            }
-            
             // Создание следов
-            entity.trailTimer++;
-            if (entity.trailTimer >= 3) {
-                entity.trailTimer = 0;
-                createTrail(entity.x, entity.y, entity.color, entity.radius * 0.7);
+            if (game.settings.trails) {
+                entity.trailTimer++;
+                if (entity.trailTimer >= 3) {
+                    entity.trailTimer = 0;
+                    createTrail(entity.x, entity.y, entity.color, entity.radius * 0.7);
+                }
+            }
+        }
+
+        // Ограничение в пределах арены с отскоком
+        function keepInArenaWithBounce(entity) {
+            const arenaRadius = 250;
+            const dist = Math.sqrt(entity.x * entity.x + entity.y * entity.y);
+            
+            if (dist + entity.radius > arenaRadius) {
+                // Отодвигаем от границы
+                const angle = Math.atan2(entity.y, entity.x);
+                entity.x = Math.cos(angle) * (arenaRadius - entity.radius);
+                entity.y = Math.sin(angle) * (arenaRadius - entity.radius);
+                
+                // Рассчитываем отскок
+                const normalX = Math.cos(angle);
+                const normalY = Math.sin(angle);
+                const dot = entity.vx * normalX + entity.vy * normalY;
+                
+                // Отражение вектора скорости
+                entity.vx = entity.vx - 1.8 * dot * normalX;
+                entity.vy = entity.vy - 1.8 * dot * normalY;
+                
+                // Немного теряем энергию при отскоке
+                entity.vx *= 0.9;
+                entity.vy *= 0.9;
+                
+                // Эффект отскока
+                if (game.settings.effects) {
+                    createWallBounceEffect(entity.x, entity.y, angle, entity.color);
+                }
+            }
+        }
+
+        // Ограничение в пределах арены без отскока
+        function keepInArena(entity) {
+            const arenaRadius = 250;
+            const dist = Math.sqrt(entity.x * entity.x + entity.y * entity.y);
+            
+            if (dist + entity.radius > arenaRadius) {
+                const angle = Math.atan2(entity.y, entity.x);
+                entity.x = Math.cos(angle) * (arenaRadius - entity.radius);
+                entity.y = Math.sin(angle) * (arenaRadius - entity.radius);
+                
+                // Просто останавливаем у границы
+                entity.vx = 0;
+                entity.vy = 0;
             }
         }
 
@@ -1048,7 +1630,10 @@
                     const dy = enemy.y - enemy.target.y;
                     const distance = Math.sqrt(dx*dx + dy*dy);
                     
-                    if (distance < enemy.weapon.range) {
+                    // Учет точности бота
+                    const effectiveRange = enemy.weapon.range * enemy.accuracy;
+                    
+                    if (distance < effectiveRange) {
                         useWeapon(enemy, enemy.target);
                         enemy.lastAttackTime = now;
                         enemy.attackCooldown = 1000 + Math.random() * 2000;
@@ -1065,22 +1650,13 @@
                         enemy.vx += (dx / distance) * 0.05 * enemy.aggression;
                         enemy.vy += (dy / distance) * 0.05 * enemy.aggression;
                     }
-                }
-                
-                // Избегание других ботов
-                game.enemies.forEach(other => {
-                    if (other !== enemy) {
-                        const dx = enemy.x - other.x;
-                        const dy = enemy.y - other.y;
-                        const distance = Math.sqrt(dx*dx + dy*dy);
-                        const minDistance = enemy.radius + other.radius + 20;
-                        
-                        if (distance < minDistance) {
-                            enemy.vx += (dx / distance) * 0.1;
-                            enemy.vy += (dy / distance) * 0.1;
-                        }
+                } else {
+                    // Случайное блуждание
+                    if (Math.random() < 0.02) {
+                        enemy.vx += (Math.random() - 0.5) * 0.5;
+                        enemy.vy += (Math.random() - 0.5) * 0.5;
                     }
-                });
+                }
                 
                 // Ограничение скорости
                 const speed = Math.sqrt(enemy.vx*enemy.vx + enemy.vy*enemy.vy);
@@ -1096,24 +1672,24 @@
             let targets = [];
             
             // Добавляем игрока как цель
-            if (!game.player.shield) {
-                targets.push({
-                    entity: game.player,
-                    distance: getDistance(bot, game.player),
-                    priority: 2.0
+            targets.push({
+                entity: game.player,
+                distance: getDistance(bot, game.player),
+                priority: 2.0
+            });
+            
+            // Добавляем других ботов как цели (если включено)
+            if (game.settings.botFriendlyFire) {
+                game.enemies.forEach(enemy => {
+                    if (enemy !== bot) {
+                        targets.push({
+                            entity: enemy,
+                            distance: getDistance(bot, enemy),
+                            priority: 1.0
+                        });
+                    }
                 });
             }
-            
-            // Добавляем других ботов как цели
-            game.enemies.forEach(enemy => {
-                if (enemy !== bot && !enemy.shield) {
-                    targets.push({
-                        entity: enemy,
-                        distance: getDistance(bot, enemy),
-                        priority: 1.0
-                    });
-                }
-            });
             
             // Сортируем по приоритету и расстоянию
             targets.sort((a, b) => {
@@ -1132,37 +1708,12 @@
             return Math.sqrt(dx*dx + dy*dy);
         }
 
-        // Ограничение в пределах арены
-        function keepInArena(entity) {
-            const arenaRadius = 250;
-            const dist = Math.sqrt(entity.x * entity.x + entity.y * entity.y);
-            
-            if (dist + entity.radius > arenaRadius) {
-                const angle = Math.atan2(entity.y, entity.x);
-                entity.x = Math.cos(angle) * (arenaRadius - entity.radius);
-                entity.y = Math.sin(angle) * (arenaRadius - entity.radius);
-                
-                // Отскок от стен
-                const normalX = Math.cos(angle);
-                const normalY = Math.sin(angle);
-                const dot = entity.vx * normalX + entity.vy * normalY;
-                
-                entity.vx = entity.vx - 1.8 * dot * normalX;
-                entity.vy = entity.vy - 1.8 * dot * normalY;
-                
-                // Уменьшаем скорость при отскоке
-                entity.vx *= 0.85;
-                entity.vy *= 0.85;
-                
-                // Эффект отскока
-                createWallBounceEffect(entity.x, entity.y, angle, entity.color);
-            }
-        }
-
         // Проверка сбора предметов
         function checkPickups() {
             // Проверяем игрока
-            checkEntityPickups(game.player);
+            if (game.settings.autoCollect) {
+                checkEntityPickups(game.player);
+            }
             
             // Проверяем врагов
             game.enemies.forEach(enemy => {
@@ -1172,8 +1723,6 @@
 
         // Проверка сбора предметов сущностью
         function checkEntityPickups(entity) {
-            const now = Date.now();
-            
             // Сбор оружия
             for (let i = game.weapons.length - 1; i >= 0; i--) {
                 const weapon = game.weapons[i];
@@ -1187,83 +1736,20 @@
                         game.weapons.splice(i, 1);
                         
                         // Эффект подбора
-                        createWeaponPickupEffect(entity, weapon);
+                        if (game.settings.effects) {
+                            createWeaponPickupEffect(entity, weapon);
+                        }
                         
                         // Обновляем интерфейс для игрока
                         if (entity.isPlayer) {
                             updateWeaponUI();
-                            createFloatingText('+ ' + weapon.name, entity.x, entity.y, weapon.color);
+                            if (game.settings.floatingText) {
+                                createFloatingText('+ ' + weapon.name, entity.x, entity.y, weapon.color);
+                            }
                         }
                     }
                     break;
                 }
-            }
-            
-            // Сбор баффов
-            for (let i = game.effects.length - 1; i >= 0; i--) {
-                const effect = game.effects[i];
-                if (effect.type === 'powerUp') {
-                    const dx = entity.x - effect.x;
-                    const dy = entity.y - effect.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    
-                    if (dist < entity.radius + 25) {
-                        applyPowerUp(entity, effect.powerUp);
-                        game.effects.splice(i, 1);
-                        
-                        // Эффект применения баффа
-                        createPowerUpPickupEffect(entity, effect.powerUp);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Применить бафф
-        function applyPowerUp(entity, powerUp) {
-            const now = Date.now();
-            
-            switch(powerUp.type) {
-                case 'shield':
-                    entity.shield = true;
-                    entity.shieldEndTime = now + powerUp.duration;
-                    createShieldEffect(entity);
-                    if (entity.isPlayer) {
-                        game.powerUpActive = true;
-                        game.powerUpEndTime = now + powerUp.duration;
-                        document.getElementById('powerUpIndicator').style.display = 'block';
-                        setTimeout(() => {
-                            if (now >= game.powerUpEndTime) {
-                                document.getElementById('powerUpIndicator').style.display = 'none';
-                                game.powerUpActive = false;
-                            }
-                        }, powerUp.duration);
-                    }
-                    break;
-                    
-                case 'heal':
-                    entity.health = Math.min(entity.maxHealth, entity.health + powerUp.amount);
-                    createHealEffect(entity);
-                    if (entity.isPlayer) {
-                        createFloatingText('+' + powerUp.amount + ' HP', entity.x, entity.y, '#4CAF50');
-                    }
-                    break;
-                    
-                case 'speed':
-                    const originalSpeed = entity.speed;
-                    entity.speed *= powerUp.multiplier;
-                    createSpeedEffect(entity);
-                    if (entity.isPlayer) {
-                        createFloatingText('⚡ СКОРОСТЬ!', entity.x, entity.y, '#FF9800');
-                    }
-                    setTimeout(() => {
-                        entity.speed = originalSpeed;
-                    }, powerUp.duration);
-                    break;
-            }
-            
-            if (entity.isPlayer) {
-                createFloatingText(powerUp.name, entity.x, entity.y, powerUp.color);
             }
         }
 
@@ -1271,21 +1757,19 @@
         function checkWeaponUsage() {
             const now = Date.now();
             
-            // Проверяем игрока (автоматическая атака)
+            // Проверяем игрока
             if (game.player.weapon && now - game.player.lastHitTime > 1000) {
                 let closestEnemy = null;
                 let minDist = game.player.weapon.range;
                 
                 game.enemies.forEach(enemy => {
-                    if (!enemy.shield) {
-                        const dx = game.player.x - enemy.x;
-                        const dy = game.player.y - enemy.y;
-                        const dist = Math.sqrt(dx*dx + dy*dy);
-                        
-                        if (dist < minDist) {
-                            minDist = dist;
-                            closestEnemy = enemy;
-                        }
+                    const dx = game.player.x - enemy.x;
+                    const dy = game.player.y - enemy.y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (dist < minDist) {
+                        minDist = dist;
+                        closestEnemy = enemy;
                     }
                 });
                 
@@ -1294,33 +1778,34 @@
                 }
             }
             
-            // Боты атакуют автоматически через updateBotAI
+            // Боты атакуют автоматически
         }
 
         // Использовать оружие
         function useWeapon(attacker, target) {
             const now = Date.now();
             
-            // Нельзя атаковать через щит
-            if (target.shield) {
-                createShieldBlockEffect(target);
-                return;
-            }
-            
             // Наносим урон
             const damage = attacker.weapon.damage;
             target.health -= damage;
             
-            // Эффекты урона
-            createDamageEffect(target, damage);
-            createAttackEffect(attacker, target);
+            // Учитываем нанесенный урон
+            attacker.totalDamage += damage;
             
-            // Обнуляем оружие (оно одноразовое)
+            // Эффекты урона
+            if (game.settings.effects) {
+                createDamageEffect(target, damage);
+                createAttackEffect(attacker, target);
+            }
+            
+            // Обнуляем оружие
             attacker.weapon = null;
             attacker.lastHitTime = now;
             
             // Эффект разрушения оружия
-            createWeaponBreakEffect(attacker);
+            if (game.settings.effects) {
+                createWeaponBreakEffect(attacker);
+            }
             
             // Обновляем интерфейс для игрока
             if (attacker.isPlayer) {
@@ -1329,21 +1814,13 @@
                 // Увеличиваем комбо
                 game.combo++;
                 game.lastComboTime = now;
-                if (game.combo > 1) {
+                if (game.combo > 1 && game.settings.floatingText) {
                     createComboEffect(game.combo);
-                }
-            }
-            
-            // Убийство врага игроком
-            if (target.health <= 0 && attacker.isPlayer) {
-                attacker.killStreak++;
-                if (attacker.killStreak > 1) {
-                    createKillStreakEffect(attacker, attacker.killStreak);
                 }
             }
         }
 
-        // Проверка столкновений (без урона!)
+        // Проверка столкновений
         function checkCollisions() {
             // Столкновения между врагами и игроком
             game.enemies.forEach(enemy => {
@@ -1362,8 +1839,19 @@
                     enemy.x -= Math.cos(angle) * overlap * 0.5;
                     enemy.y -= Math.sin(angle) * overlap * 0.5;
                     
-                    // Эффект столкновения (без урона!)
-                    createCollisionEffect(game.player, enemy);
+                    // Отскок при включенной настройке
+                    if (game.settings.wallBounce) {
+                        const force = 0.5;
+                        game.player.vx += Math.cos(angle) * force;
+                        game.player.vy += Math.sin(angle) * force;
+                        enemy.vx -= Math.cos(angle) * force;
+                        enemy.vy -= Math.sin(angle) * force;
+                    }
+                    
+                    // Эффект столкновения
+                    if (game.settings.effects) {
+                        createCollisionEffect(game.player, enemy);
+                    }
                 }
             });
             
@@ -1388,8 +1876,19 @@
                         b.x -= Math.cos(angle) * overlap * 0.5;
                         b.y -= Math.sin(angle) * overlap * 0.5;
                         
+                        // Отскок при включенной настройке
+                        if (game.settings.wallBounce) {
+                            const force = 0.5;
+                            a.vx += Math.cos(angle) * force;
+                            a.vy += Math.sin(angle) * force;
+                            b.vx -= Math.cos(angle) * force;
+                            b.vy -= Math.sin(angle) * force;
+                        }
+                        
                         // Эффект столкновения
-                        createCollisionEffect(a, b);
+                        if (game.settings.effects) {
+                            createCollisionEffect(a, b);
+                        }
                     }
                 }
             }
@@ -1415,7 +1914,7 @@
                     if (now - game.player.lastHitTime < 1000 && 
                         getDistance(game.player, enemy) < 200) {
                         killer = game.player;
-                    } else {
+                    } else if (game.settings.botFriendlyFire) {
                         // Проверяем других ботов
                         for (const otherEnemy of game.enemies) {
                             if (otherEnemy !== enemy && 
@@ -1433,32 +1932,41 @@
                             // Игрок убил
                             game.kills++;
                             game.totalKills++;
+                            killer.kills++;
                             killer.killStreak++;
                             
                             // Награда монетами
                             const coinReward = 2 + Math.floor(game.combo / 2);
                             game.coins += coinReward;
+                            killer.coins = (killer.coins || 0) + coinReward;
                             
                             // Эффекты
-                            createCoinEffect(enemy, coinReward);
-                            createKillEffect(killer, enemy);
+                            if (game.settings.effects) {
+                                createCoinEffect(enemy, coinReward);
+                                createKillEffect(killer, enemy);
+                            }
                             
                             // Обновляем рекорд
                             if (game.kills > game.record) {
                                 game.record = game.kills;
-                                if (game.kills >= 5) {
+                                if (game.kills >= 5 && game.settings.effects) {
                                     createNewRecordEffect();
                                 }
                             }
                         } else {
-                            // Бот убил другого бота
+                            // Бот убил
+                            killer.kills++;
                             killer.killStreak++;
-                            createBotKillEffect(killer, enemy);
+                            if (game.settings.effects) {
+                                createBotKillEffect(killer, enemy);
+                            }
                         }
                     }
                     
                     // Эффект смерти
-                    createDeathEffect(enemy);
+                    if (game.settings.effects) {
+                        createDeathEffect(enemy);
+                    }
                     
                     // Удаляем врага
                     game.enemies.splice(i, 1);
@@ -1470,405 +1978,151 @@
 
         // Создать эффект урона
         function createDamageEffect(target, damage) {
-            // Текст урона
-            createFloatingText('-' + damage, target.x, target.y - target.radius - 15, '#ff0000', 28);
+            if (!game.settings.effects) return;
             
-            // Кровавые брызги
-            for (let i = 0; i < 12; i++) {
-                createParticle(
-                    target.x, target.y,
-                    '#ff0000',
-                    (Math.random() - 0.5) * 8,
-                    (Math.random() - 0.5) * 8,
-                    2 + Math.random() * 4,
-                    30 + Math.random() * 60
-                );
+            // Текст урона
+            if (game.settings.floatingText) {
+                createFloatingText('-' + damage, target.x, target.y - target.radius - 15, '#ff0000', 24);
             }
             
             // Эффект встряски
             target.damageEffect = 1;
-            game.screenShake = 10;
-            
-            // Звуковой эффект (визуальный)
-            createHitSoundWave(target.x, target.y, damage);
+            if (game.settings.screenShake) {
+                game.screenShake = 8;
+            }
         }
 
         // Создать эффект атаки
         function createAttackEffect(attacker, target) {
+            if (!game.settings.effects) return;
+            
             // Линия атаки
             createBeamEffect(attacker, target, attacker.weapon.color);
-            
-            // Вспышка на цели
-            createFlashEffect(target.x, target.y, '#ffffff', 35, 15);
-            
-            // Частицы от атаки
-            const angle = Math.atan2(target.y - attacker.y, target.x - attacker.x);
-            for (let i = 0; i < 8; i++) {
-                const speed = 3 + Math.random() * 4;
-                createParticle(
-                    attacker.x, attacker.y,
-                    attacker.weapon.color,
-                    Math.cos(angle) * speed + (Math.random() - 0.5) * 2,
-                    Math.sin(angle) * speed + (Math.random() - 0.5) * 2,
-                    3 + Math.random() * 3,
-                    40 + Math.random() * 40
-                );
-            }
         }
 
         // Создать эффект подбора оружия
         function createWeaponPickupEffect(entity, weapon) {
-            // Круговые волны
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    createRingEffect(entity.x, entity.y, weapon.color, 20 + i * 15, 30);
-                }, i * 100);
-            }
+            if (!game.settings.effects) return;
             
-            // Взрыв частиц
-            for (let i = 0; i < 16; i++) {
-                const angle = (i / 16) * Math.PI * 2;
-                createParticle(
-                    entity.x, entity.y,
-                    weapon.color,
-                    Math.cos(angle) * 3,
-                    Math.sin(angle) * 3,
-                    2 + Math.random() * 3,
-                    50 + Math.random() * 50
-                );
-            }
+            // Кольцевая волна
+            createRingEffect(entity.x, entity.y, weapon.color, 30, 20);
         }
 
         // Создать эффект разрушения оружия
         function createWeaponBreakEffect(entity) {
-            // Взрыв осколков
-            for (let i = 0; i < 24; i++) {
+            if (!game.settings.effects) return;
+            
+            // Взрыв частиц
+            for (let i = 0; i < 8; i++) {
                 const angle = Math.random() * Math.PI * 2;
-                const speed = 2 + Math.random() * 5;
+                const speed = 1 + Math.random() * 3;
                 createParticle(
                     entity.x, entity.y,
                     entity.weapon ? entity.weapon.color : '#ffffff',
                     Math.cos(angle) * speed,
                     Math.sin(angle) * speed,
-                    1 + Math.random() * 2,
-                    40 + Math.random() * 40
+                    2,
+                    30
                 );
             }
-            
-            // Кольцевая волна
-            createRingEffect(entity.x, entity.y, '#ffffff', 30, 20);
         }
 
         // Создать эффект смерти
         function createDeathEffect(entity) {
-            // Большой взрыв
-            for (let i = 0; i < 48; i++) {
+            if (!game.settings.effects) return;
+            
+            // Взрыв
+            for (let i = 0; i < 12; i++) {
                 const angle = Math.random() * Math.PI * 2;
-                const speed = 1 + Math.random() * 8;
+                const speed = 1 + Math.random() * 4;
                 createParticle(
                     entity.x, entity.y,
                     entity.color,
                     Math.cos(angle) * speed,
                     Math.sin(angle) * speed,
-                    2 + Math.random() * 6,
-                    60 + Math.random() * 90
+                    3 + Math.random() * 3,
+                    40
                 );
             }
-            
-            // Волна смерти
-            createRingEffect(entity.x, entity.y, entity.color, entity.radius * 2, 40);
-            
-            // Текст смерти
-            createFloatingText('УНИЧТОЖЕН!', entity.x, entity.y, '#ff0000', 24);
         }
 
         // Создать эффект убийства
         function createKillEffect(killer, victim) {
-            // Эффект вокруг убийцы
-            createRingEffect(killer.x, killer.y, '#FFD700', killer.radius * 1.5, 30);
+            if (!game.settings.effects) return;
             
-            // Текст убийства
-            if (killer.isPlayer) {
-                createFloatingText('УБИЙСТВО!', killer.x, killer.y, '#FFD700', 32);
-            }
+            // Волна от убийцы
+            createRingEffect(killer.x, killer.y, '#FFD700', killer.radius * 1.5, 25);
         }
 
         // Создать эффект убийства бота
         function createBotKillEffect(killer, victim) {
-            // Маленький эффект для ботов
-            createRingEffect(killer.x, killer.y, killer.color, killer.radius * 1.2, 20);
+            if (!game.settings.effects) return;
+            
+            // Маленькая волна
+            createRingEffect(killer.x, killer.y, killer.color, killer.radius * 1.2, 15);
         }
 
         // Создать эффект комбо
         function createComboEffect(combo) {
+            if (!game.settings.effects || !game.settings.floatingText) return;
+            
             const x = game.player.x;
             const y = game.player.y;
             
             // Текст комбо
-            createFloatingText('КОМБО x' + combo, x, y - 50, '#FF416C', 36 + combo * 2);
-            
-            // Эффект вокруг игрока
-            for (let i = 0; i < combo * 2; i++) {
-                setTimeout(() => {
-                    createRingEffect(x, y, '#FF416C', 20 + i * 10, 15);
-                }, i * 50);
-            }
-        }
-
-        // Создать эффект серии убийств
-        function createKillStreakEffect(entity, streak) {
-            if (streak >= 3) {
-                const texts = [
-                    [3, '🔥 ГОРЯЧО!', '#FF9800'],
-                    [5, '⚡ НЕОСТАНОВИМ!', '#4CC9F0'],
-                    [7, '💀 УБИЙЦА!', '#ff0000'],
-                    [10, '👑 ЛЕГЕНДА!', '#FFD700']
-                ];
-                
-                for (const [minStreak, text, color] of texts) {
-                    if (streak === minStreak) {
-                        createFloatingText(text, entity.x, entity.y, color, 42);
-                        createRingEffect(entity.x, entity.y, color, 50, 50);
-                        game.screenShake = 15;
-                        break;
-                    }
-                }
-            }
+            createFloatingText('КОМБО x' + combo, x, y - 50, '#FF416C', 28 + combo);
         }
 
         // Создать эффект сброса комбо
         function createComboResetEffect() {
-            createFloatingText('КОМБО СБРОШЕНО', game.player.x, game.player.y, '#808080', 24);
+            if (!game.settings.effects || !game.settings.floatingText) return;
+            
+            createFloatingText('КОМБО СБРОШЕНО', game.player.x, game.player.y, '#808080', 20);
         }
 
         // Создать эффект нового рекорда
         function createNewRecordEffect() {
-            createFloatingText('НОВЫЙ РЕКОРД!', game.player.x, game.player.y, '#FFD700', 48);
+            if (!game.settings.effects || !game.settings.floatingText) return;
             
-            // Фейерверк
-            for (let i = 0; i < 20; i++) {
-                setTimeout(() => {
-                    const angle = Math.random() * Math.PI * 2;
-                    const distance = 50 + Math.random() * 100;
-                    const x = game.player.x + Math.cos(angle) * distance;
-                    const y = game.player.y + Math.sin(angle) * distance;
-                    
-                    // Маленький взрыв
-                    for (let j = 0; j < 12; j++) {
-                        const a = Math.random() * Math.PI * 2;
-                        const s = 1 + Math.random() * 4;
-                        createParticle(
-                            x, y,
-                            ['#FFD700', '#FF9800', '#FF416C'][Math.floor(Math.random() * 3)],
-                            Math.cos(a) * s,
-                            Math.sin(a) * s,
-                            2 + Math.random() * 3,
-                            40 + Math.random() * 40
-                        );
-                    }
-                }, i * 100);
-            }
+            createFloatingText('НОВЫЙ РЕКОРД!', game.player.x, game.player.y, '#FFD700', 32);
         }
 
         // Создать эффект монет
         function createCoinEffect(entity, amount) {
+            if (!game.settings.effects || !game.settings.floatingText) return;
+            
             // Текст монет
-            createFloatingText('+' + amount + '💰', entity.x, entity.y, '#FFD700', 24);
-            
-            // Летящие монеты
-            for (let i = 0; i < amount; i++) {
-                setTimeout(() => {
-                    createFloatingCoin(entity.x, entity.y);
-                }, i * 100);
-            }
-        }
-
-        // Создать эффект щита
-        function createShieldEffect(entity) {
-            // Кольца щита
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    createRingEffect(entity.x, entity.y, '#4CC9F0', entity.radius + 10 + i * 20, 30);
-                }, i * 200);
-            }
-            
-            // Частицы щита
-            for (let i = 0; i < 24; i++) {
-                const angle = (i / 24) * Math.PI * 2;
-                const distance = entity.radius + 15;
-                createParticle(
-                    entity.x + Math.cos(angle) * distance,
-                    entity.y + Math.sin(angle) * distance,
-                    '#4CC9F0',
-                    0,
-                    0,
-                    2 + Math.random() * 2,
-                    60 + Math.random() * 60
-                );
-            }
-        }
-
-        // Создать эффект окончания щита
-        function createShieldEndEffect(entity) {
-            createRingEffect(entity.x, entity.y, '#808080', entity.radius + 20, 20);
-            createFloatingText('ЩИТ ПРОБИТ', entity.x, entity.y, '#808080', 20);
-        }
-
-        // Создать эффект блокировки щитом
-        function createShieldBlockEffect(entity) {
-            createRingEffect(entity.x, entity.y, '#4CC9F0', entity.radius + 15, 15);
-            createFloatingText('БЛОК!', entity.x, entity.y, '#4CC9F0', 24);
-        }
-
-        // Создать эффект лечения
-        function createHealEffect(entity) {
-            // Поднимающиеся сердца
-            for (let i = 0; i < 8; i++) {
-                setTimeout(() => {
-                    createFloatingText('❤️', 
-                        entity.x + (Math.random() - 0.5) * 30, 
-                        entity.y,
-                        '#4CAF50',
-                        20 + Math.random() * 10
-                    );
-                }, i * 100);
-            }
-            
-            // Кольца лечения
-            createRingEffect(entity.x, entity.y, '#4CAF50', entity.radius + 10, 30);
-        }
-
-        // Создать эффект скорости
-        function createSpeedEffect(entity) {
-            // Следы скорости
-            for (let i = 0; i < 5; i++) {
-                setTimeout(() => {
-                    createTrail(entity.x, entity.y, '#FF9800', entity.radius * 0.5);
-                }, i * 50);
-            }
-            
-            // Вспышка
-            createFlashEffect(entity.x, entity.y, '#FF9800', 40, 20);
+            createFloatingText('+' + amount + '💰', entity.x, entity.y, '#FFD700', 20);
         }
 
         // Создать эффект спавна
         function createSpawnEffect(x, y, color) {
-            // Расширяющееся кольцо
-            createRingEffect(x, y, color, 10, 40);
+            if (!game.settings.effects) return;
             
-            // Взрыв частиц
-            for (let i = 0; i < 16; i++) {
-                const angle = (i / 16) * Math.PI * 2;
-                createParticle(
-                    x, y,
-                    color,
-                    Math.cos(angle) * 4,
-                    Math.sin(angle) * 4,
-                    2 + Math.random() * 3,
-                    50 + Math.random() * 50
-                );
-            }
-        }
-
-        // Создать эффект спавна баффа
-        function createPowerUpSpawnEffect(x, y, color) {
-            // Мерцающее кольцо
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    createRingEffect(x, y, color, 20 + i * 10, 20);
-                }, i * 300);
-            }
-            
-            // Вращающиеся частицы
-            for (let i = 0; i < 12; i++) {
-                const angle = (i / 12) * Math.PI * 2;
-                const distance = 20;
-                createParticle(
-                    x + Math.cos(angle) * distance,
-                    y + Math.sin(angle) * distance,
-                    color,
-                    0,
-                    0,
-                    3,
-                    120
-                );
-            }
-        }
-
-        // Создать эффект подбора баффа
-        function createPowerUpPickupEffect(entity, powerUp) {
-            // Вспышка
-            createFlashEffect(entity.x, entity.y, powerUp.color, 50, 25);
-            
-            // Текст баффа
-            createFloatingText(powerUp.name, entity.x, entity.y, powerUp.color, 28);
-            
-            // Кольца
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    createRingEffect(entity.x, entity.y, powerUp.color, 30 + i * 20, 20);
-                }, i * 150);
-            }
+            createRingEffect(x, y, color, 20, 30);
         }
 
         // Создать эффект столкновения
         function createCollisionEffect(a, b) {
+            if (!game.settings.effects) return;
+            
             const midX = (a.x + b.x) / 2;
             const midY = (a.y + b.y) / 2;
             
-            // Маленькая волна
-            createRingEffect(midX, midY, '#ffffff', 20, 15);
-            
-            // Частицы
-            for (let i = 0; i < 8; i++) {
-                const angle = Math.atan2(b.y - a.y, b.x - a.x) + (Math.random() - 0.5) * 1;
-                createParticle(
-                    midX, midY,
-                    '#ffffff',
-                    Math.cos(angle) * 3,
-                    Math.sin(angle) * 3,
-                    1 + Math.random() * 2,
-                    30 + Math.random() * 30
-                );
-            }
+            createRingEffect(midX, midY, '#ffffff', 15, 10);
         }
 
         // Создать эффект отскока от стены
         function createWallBounceEffect(x, y, angle, color) {
-            // Линия отскока
-            createBeamEffect(
-                {x: x, y: y},
-                {x: x + Math.cos(angle) * 50, y: y + Math.sin(angle) * 50},
-                color,
-                15
-            );
+            if (!game.settings.effects) return;
             
-            // Частицы
-            for (let i = 0; i < 6; i++) {
-                const a = angle + Math.PI + (Math.random() - 0.5) * 0.5;
-                createParticle(
-                    x, y,
-                    color,
-                    Math.cos(a) * 4,
-                    Math.sin(a) * 4,
-                    1 + Math.random() * 2,
-                    40 + Math.random() * 40
-                );
-            }
-        }
-
-        // Создать звуковую волну
-        function createHitSoundWave(x, y, damage) {
-            const intensity = Math.min(damage / 25, 1.5);
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    createRingEffect(x, y, '#ffffff', 10 + i * 15 * intensity, 10 * intensity);
-                }, i * 50);
-            }
+            createRingEffect(x, y, color, 25, 15);
         }
 
         // Создать луч
-        function createBeamEffect(from, to, color, duration = 20) {
+        function createBeamEffect(from, to, color, duration = 15) {
+            if (!game.settings.effects) return;
+            
             game.effects.push({
                 type: 'beam',
                 from: {x: from.x, y: from.y},
@@ -1876,12 +2130,14 @@
                 color: color,
                 life: duration,
                 maxLife: duration,
-                width: 3
+                width: 2
             });
         }
 
         // Создать кольцо
-        function createRingEffect(x, y, color, radius, duration = 30) {
+        function createRingEffect(x, y, color, radius, duration = 20) {
+            if (!game.settings.effects) return;
+            
             game.effects.push({
                 type: 'ring',
                 x: x,
@@ -1894,33 +2150,24 @@
             });
         }
 
-        // Создать вспышку
-        function createFlashEffect(x, y, color, size, duration = 20) {
-            game.effects.push({
-                type: 'flash',
-                x: x,
-                y: y,
-                color: color,
-                size: size,
-                life: duration,
-                maxLife: duration
-            });
-        }
-
         // Создать след
         function createTrail(x, y, color, size) {
+            if (!game.settings.trails) return;
+            
             game.trails.push({
                 x: x,
                 y: y,
                 color: color,
                 size: size,
-                life: 30,
-                maxLife: 30
+                life: 20,
+                maxLife: 20
             });
         }
 
         // Создать частицу
         function createParticle(x, y, color, vx, vy, size, life) {
+            if (!game.settings.effects) return;
+            
             game.particles.push({
                 x: x,
                 y: y,
@@ -1935,34 +2182,18 @@
         }
 
         // Создать плавающий текст
-        function createFloatingText(text, x, y, color, size = 20) {
+        function createFloatingText(text, x, y, color, size = 18) {
+            if (!game.settings.floatingText) return;
+            
             game.floatingTexts.push({
                 text: text,
                 x: x,
                 y: y,
                 color: color,
                 size: size,
-                life: 90,
-                maxLife: 90,
+                life: 60,
+                maxLife: 60,
                 vy: -1
-            });
-        }
-
-        // Создать летящую монету
-        function createFloatingCoin(x, y) {
-            const angle = Math.random() * Math.PI * 2;
-            const distance = 30;
-            game.floatingTexts.push({
-                text: '💰',
-                x: x + Math.cos(angle) * distance,
-                y: y + Math.sin(angle) * distance,
-                color: '#FFD700',
-                size: 24,
-                life: 120,
-                maxLife: 120,
-                vy: -0.8,
-                rotation: 0,
-                rotationSpeed: 0.1
             });
         }
 
@@ -1972,21 +2203,6 @@
                 const effect = game.effects[i];
                 effect.life--;
                 
-                // Обновление в зависимости от типа
-                switch(effect.type) {
-                    case 'powerUp':
-                        effect.rotation += 0.05;
-                        effect.y += Math.sin(game.gameTime * 0.1 + effect.x * 0.01) * 0.2;
-                        break;
-                        
-                    case 'beam':
-                    case 'ring':
-                    case 'flash':
-                        // Просто исчезают
-                        break;
-                }
-                
-                // Удаляем мертвые эффекты
                 if (effect.life <= 0) {
                     game.effects.splice(i, 1);
                 }
@@ -2002,7 +2218,6 @@
                 p.vy += p.gravity;
                 p.life--;
                 
-                // Удаляем мертвые частицы
                 if (p.life <= 0) {
                     game.particles.splice(i, 1);
                 }
@@ -2015,7 +2230,6 @@
                 const trail = game.trails[i];
                 trail.life--;
                 
-                // Удаляем мертвые следы
                 if (trail.life <= 0) {
                     game.trails.splice(i, 1);
                 }
@@ -2029,15 +2243,310 @@
                 text.y += text.vy;
                 text.life--;
                 
-                if (text.rotation !== undefined) {
-                    text.rotation += text.rotationSpeed || 0;
-                }
-                
-                // Удаляем мертвый текст
                 if (text.life <= 0) {
                     game.floatingTexts.splice(i, 1);
                 }
             }
+        }
+
+        // ========== ИНТЕРФЕЙС И ЛИДЕРБОРД ==========
+
+        // Обновить игровой интерфейс
+        function updateGameUI() {
+            // Статистика игрока
+            document.getElementById('playerNameDisplay').textContent = game.player.name;
+            document.getElementById('healthDisplay').textContent = Math.ceil(game.player.health);
+            document.getElementById('coinsDisplay').textContent = game.coins;
+            document.getElementById('killsDisplay').textContent = game.kills;
+            document.getElementById('comboDisplay').textContent = game.combo;
+            document.getElementById('enemiesDisplay').textContent = game.enemies.length;
+            document.getElementById('weaponsDisplay').textContent = game.weapons.length;
+            
+            // Полоса здоровья
+            const healthPercent = (game.player.health / game.player.maxHealth) * 100;
+            document.getElementById('healthBarFill').style.width = healthPercent + '%';
+            
+            // Цвет полосы здоровья
+            const healthBar = document.getElementById('healthBarFill');
+            if (healthPercent > 60) {
+                healthBar.style.background = 'linear-gradient(90deg, #00ff00, #00cc00)';
+            } else if (healthPercent > 30) {
+                healthBar.style.background = 'linear-gradient(90deg, #FF9800, #EF6C00)';
+            } else {
+                healthBar.style.background = 'linear-gradient(90deg, #ff0000, #cc0000)';
+            }
+            
+            // Время игры
+            const minutes = Math.floor(game.gameTime / 60);
+            const seconds = game.gameTime % 60;
+            document.getElementById('gameTimeDisplay').textContent = 
+                `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            
+            // FPS
+            document.getElementById('fpsDisplay').textContent = game.fps;
+            
+            // Время сессии
+            const sessionTime = Math.floor((Date.now() - game.sessionStartTime) / 1000);
+            const sessionMinutes = Math.floor(sessionTime / 60);
+            const sessionSeconds = sessionTime % 60;
+            document.getElementById('sessionTime').textContent = 
+                `${sessionMinutes}:${sessionSeconds.toString().padStart(2, '0')}`;
+            
+            document.getElementById('sessionKills').textContent = game.kills;
+            document.getElementById('sessionCombo').textContent = game.combo;
+            
+            // Количество ботов в игре
+            document.getElementById('gameBotCount').textContent = game.enemies.length;
+        }
+
+        // Обновить интерфейс оружия
+        function updateWeaponUI() {
+            if (game.player.weapon) {
+                document.getElementById('weaponDisplay').textContent = game.player.weapon.name;
+                document.getElementById('ammoDisplay').textContent = game.player.weapon.ammo;
+                document.getElementById('damageDisplay').textContent = game.player.weapon.damage;
+            } else {
+                document.getElementById('weaponDisplay').textContent = 'Нет';
+                document.getElementById('ammoDisplay').textContent = '-';
+                document.getElementById('damageDisplay').textContent = '-';
+            }
+        }
+
+        // Обновить таблицу лидеров
+        function updateLeaderboard() {
+            const tbody = document.querySelector('#gameLeaderboard tbody');
+            tbody.innerHTML = '';
+            
+            // Собираем всех участников
+            let participants = [
+                {
+                    name: game.player.name,
+                    damage: game.player.totalDamage,
+                    health: Math.ceil(game.player.health),
+                    kills: game.player.kills || 0,
+                    isPlayer: true,
+                    isCreator: game.player.name === 'Jekapro2013'
+                }
+            ];
+            
+            game.enemies.forEach(enemy => {
+                participants.push({
+                    name: enemy.name,
+                    damage: enemy.totalDamage || 0,
+                    health: Math.ceil(enemy.health),
+                    kills: enemy.kills || 0,
+                    isPlayer: false,
+                    isCreator: false
+                });
+            });
+            
+            // Сортируем по урону
+            participants.sort((a, b) => b.damage - a.damage);
+            
+            // Заполняем таблицу
+            participants.forEach((p, index) => {
+                const row = document.createElement('tr');
+                if (p.isPlayer) {
+                    row.style.background = 'rgba(76, 201, 240, 0.1)';
+                }
+                
+                const healthPercent = (p.health / 100) * 100;
+                const healthColor = healthPercent > 60 ? '#4CAF50' : 
+                                  healthPercent > 30 ? '#FF9800' : '#F44336';
+                
+                row.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>
+                        ${p.name}
+                        ${p.isCreator ? '<span class="creator-badge">СОЗДАТЕЛЬ</span>' : ''}
+                    </td>
+                    <td>${p.damage}</td>
+                    <td>
+                        <div class="health-bar" style="width: 50px; display: inline-block;">
+                            <div class="health-fill" style="width: ${healthPercent}%; background: ${healthColor};"></div>
+                        </div>
+                        <span style="margin-left: 5px;">${p.health}</span>
+                    </td>
+                    <td>${p.kills}</td>
+                `;
+                tbody.appendChild(row);
+            });
+            
+            // Обновляем быструю статистику
+            updateQuickStats(participants);
+        }
+
+        // Обновить быструю статистику
+        function updateQuickStats(participants) {
+            const quickStatsDiv = document.getElementById('quickStats');
+            
+            // Находим лидеров
+            const damageLeader = participants[0];
+            const killsLeader = [...participants].sort((a, b) => b.kills - a.kills)[0];
+            const healthLeader = [...participants].sort((a, b) => b.health - a.health)[0];
+            
+            quickStatsDiv.innerHTML = `
+                <p><strong>🥇 Урон:</strong> ${damageLeader.name} (${damageLeader.damage})</p>
+                <p><strong>🎯 Убийства:</strong> ${killsLeader.name} (${killsLeader.kills})</p>
+                <p><strong>❤️ Здоровье:</strong> ${healthLeader.name} (${healthLeader.health})</p>
+            `;
+        }
+
+        // Пауза
+        function togglePause() {
+            if (!game.running) return;
+            
+            game.paused = !game.paused;
+            
+            if (game.paused) {
+                document.getElementById('gameScreen').classList.remove('active');
+                document.getElementById('pauseScreen').classList.add('active');
+                document.getElementById('pauseBtn').textContent = '▶️ ПРОДОЛЖИТЬ';
+            } else {
+                document.getElementById('pauseScreen').classList.remove('active');
+                document.getElementById('gameScreen').classList.add('active');
+                document.getElementById('pauseBtn').textContent = '⏸️ ПАУЗА';
+                
+                // Обновляем настройки из экрана паузы
+                if (document.getElementById('pauseEffectsEnabled')) {
+                    game.settings.effects = document.getElementById('pauseEffectsEnabled').checked;
+                }
+                if (document.getElementById('pauseTrailsEnabled')) {
+                    game.settings.trails = document.getElementById('pauseTrailsEnabled').checked;
+                }
+                
+                gameLoop();
+            }
+        }
+
+        // Показать игровое сообщение
+        function showGameMessage(text, color = '#4CC9F0') {
+            const messageDiv = document.getElementById('gameMessage');
+            messageDiv.textContent = text;
+            messageDiv.style.borderColor = color;
+            messageDiv.style.display = 'block';
+            messageDiv.style.boxShadow = `0 0 30px ${color}`;
+            
+            setTimeout(() => {
+                messageDiv.style.display = 'none';
+            }, 2000);
+        }
+
+        // Выйти в меню
+        function exitToMenu() {
+            game.running = false;
+            game.paused = false;
+            
+            // Сохраняем данные игрока в таблицу лидеров
+            savePlayerToLeaderboard();
+            
+            // Сохраняем все данные
+            saveGameData();
+            saveSettings();
+            saveLeaderboard();
+            
+            // Обновляем статистику в меню
+            updateMenuStats();
+            updateGlobalLeaderboard();
+            
+            // Переключаем экраны
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('pauseScreen').classList.remove('active');
+            document.getElementById('menuScreen').classList.add('active');
+        }
+
+        // Сохранить игрока в таблицу лидеров
+        function savePlayerToLeaderboard() {
+            const playerData = {
+                name: game.playerName,
+                kills: game.totalKills,
+                coins: game.coins,
+                wins: game.wins,
+                record: game.record,
+                lastPlayed: Date.now()
+            };
+            
+            // Находим существующую запись
+            const existingIndex = game.leaderboard.findIndex(p => p.name === game.playerName);
+            
+            if (existingIndex >= 0) {
+                // Обновляем существующую запись
+                const existing = game.leaderboard[existingIndex];
+                existing.kills = Math.max(existing.kills, playerData.kills);
+                existing.coins = Math.max(existing.coins, playerData.coins);
+                existing.wins = Math.max(existing.wins, playerData.wins);
+                existing.record = Math.max(existing.record, playerData.record);
+                existing.lastPlayed = playerData.lastPlayed;
+            } else {
+                // Добавляем новую запись
+                game.leaderboard.push(playerData);
+            }
+            
+            // Ограничиваем размер таблицы
+            if (game.leaderboard.length > 100) {
+                game.leaderboard.sort((a, b) => b.kills - a.kills);
+                game.leaderboard = game.leaderboard.slice(0, 50);
+            }
+        }
+
+        // Сохранить данные игры
+        function saveGameData() {
+            const data = {
+                coins: game.coins,
+                totalKills: game.totalKills,
+                record: game.record,
+                wins: game.wins,
+                playerName: game.playerName
+            };
+            localStorage.setItem('ballFightersData', JSON.stringify(data));
+        }
+
+        // Победа
+        function winGame() {
+            game.running = false;
+            game.wins++;
+            
+            // Награда
+            const baseReward = 20;
+            const killReward = game.kills * 3;
+            const comboBonus = Math.floor(game.combo * 0.5);
+            const winBonus = 10;
+            const totalReward = baseReward + killReward + comboBonus + winBonus;
+            
+            game.coins += totalReward;
+            
+            // Сохраняем
+            savePlayerToLeaderboard();
+            saveGameData();
+            saveLeaderboard();
+            
+            // Показываем сообщение о победе
+            showGameMessage(`🎉 ПОБЕДА! +${totalReward}💰`, '#FFD700');
+            
+            // Ждем 2 секунды и возвращаем в меню
+            setTimeout(() => {
+                exitToMenu();
+                alert(`🏆 ПОБЕДА!\n\nВаш результат:\nУбийств: ${game.kills}\nКомбо: x${game.combo}\nМонет заработано: ${totalReward}\nВсего монет: ${game.coins}`);
+            }, 2000);
+        }
+
+        // Конец игры
+        function gameOver() {
+            game.running = false;
+            
+            // Сохраняем
+            savePlayerToLeaderboard();
+            saveGameData();
+            saveLeaderboard();
+            
+            // Показываем сообщение о поражении
+            showGameMessage('💀 ПОРАЖЕНИЕ', '#ff0000');
+            
+            // Ждем 2 секунды и возвращаем в меню
+            setTimeout(() => {
+                exitToMenu();
+                alert(`💀 ИГРА ОКОНЧЕНА!\n\nВаш результат:\nУбийств: ${game.kills}\nКомбо: x${game.combo}\nМонет заработано: ${game.kills * 2}\nВсего монет: ${game.coins}`);
+            }, 2000);
         }
 
         // ========== ОТРИСОВКА ==========
@@ -2052,7 +2561,7 @@
             
             // Тряска экрана
             let offsetX = 0, offsetY = 0;
-            if (game.screenShake > 0) {
+            if (game.settings.screenShake && game.screenShake > 0) {
                 offsetX = (Math.random() - 0.5) * game.screenShake;
                 offsetY = (Math.random() - 0.5) * game.screenShake;
             }
@@ -2065,16 +2574,17 @@
             drawArena(centerX, centerY);
             
             // Рисуем следы
-            drawTrails(centerX, centerY);
+            if (game.settings.trails) {
+                drawTrails(centerX, centerY);
+            }
             
             // Рисуем эффекты
-            drawEffects(centerX, centerY);
+            if (game.settings.effects) {
+                drawEffects(centerX, centerY);
+            }
             
             // Рисуем оружие на земле
             drawWeapons(centerX, centerY);
-            
-            // Рисуем баффы
-            drawPowerUps(centerX, centerY);
             
             // Рисуем врагов
             game.enemies.forEach(enemy => {
@@ -2085,10 +2595,17 @@
             drawEntity(game.player, centerX, centerY);
             
             // Рисуем частицы
-            drawParticles(centerX, centerY);
+            if (game.settings.effects) {
+                drawParticles(centerX, centerY);
+            }
             
             // Рисуем плавающий текст
-            drawFloatingTexts(centerX, centerY);
+            if (game.settings.floatingText) {
+                drawFloatingTexts(centerX, centerY);
+            }
+            
+            // Рисуем короны создателя (всегда!)
+            drawCrowns(centerX, centerY);
         }
 
         // Рисовать арену
@@ -2096,13 +2613,12 @@
             const ctx = game.ctx;
             const arenaRadius = 250;
             
-            // Фон арены с градиентом
+            // Фон арены
             const gradient = ctx.createRadialGradient(
                 offsetX, offsetY, arenaRadius * 0.3,
                 offsetX, offsetY, arenaRadius
             );
             gradient.addColorStop(0, 'rgba(10, 25, 49, 0.9)');
-            gradient.addColorStop(0.5, 'rgba(15, 30, 60, 0.8)');
             gradient.addColorStop(1, 'rgba(20, 35, 70, 0.7)');
             
             ctx.fillStyle = gradient;
@@ -2111,44 +2627,15 @@
             ctx.fill();
             
             // Сетка арены
-            ctx.strokeStyle = 'rgba(76, 201, 240, 0.08)';
+            ctx.strokeStyle = 'rgba(76, 201, 240, 0.1)';
             ctx.lineWidth = 1;
             
             // Концентрические круги
-            for (let i = 1; i <= 5; i++) {
-                const radius = arenaRadius * (i / 5);
+            for (let i = 1; i <= 3; i++) {
+                const radius = arenaRadius * (i / 3);
                 ctx.beginPath();
                 ctx.arc(offsetX, offsetY, radius, 0, Math.PI * 2);
                 ctx.stroke();
-            }
-            
-            // Радиальные линии
-            for (let i = 0; i < 12; i++) {
-                const angle = (i / 12) * Math.PI * 2;
-                ctx.beginPath();
-                ctx.moveTo(offsetX, offsetY);
-                ctx.lineTo(
-                    offsetX + Math.cos(angle) * arenaRadius,
-                    offsetY + Math.sin(angle) * arenaRadius
-                );
-                ctx.stroke();
-            }
-            
-            // Анимированные точки на границе
-            const time = Date.now() * 0.001;
-            for (let i = 0; i < 24; i++) {
-                const angle = (i / 24) * Math.PI * 2 + time;
-                const pulse = Math.sin(time * 2 + i * 0.5) * 0.5 + 0.5;
-                
-                ctx.fillStyle = `rgba(76, 201, 240, ${0.3 + pulse * 0.4})`;
-                ctx.beginPath();
-                ctx.arc(
-                    offsetX + Math.cos(angle) * arenaRadius,
-                    offsetY + Math.sin(angle) * arenaRadius,
-                    2 + pulse * 2,
-                    0, Math.PI * 2
-                );
-                ctx.fill();
             }
             
             // Граница арены
@@ -2157,19 +2644,6 @@
             ctx.beginPath();
             ctx.arc(offsetX, offsetY, arenaRadius, 0, Math.PI * 2);
             ctx.stroke();
-            
-            // Свечение границы
-            ctx.shadowColor = '#4CC9F0';
-            ctx.shadowBlur = 20;
-            ctx.stroke();
-            ctx.shadowBlur = 0;
-            
-            // Центральная точка
-            const centerPulse = Math.sin(Date.now() * 0.002) * 0.3 + 0.7;
-            ctx.fillStyle = `rgba(76, 201, 240, ${0.5 * centerPulse})`;
-            ctx.beginPath();
-            ctx.arc(offsetX, offsetY, 10 * centerPulse, 0, Math.PI * 2);
-            ctx.fill();
         }
 
         // Рисовать сущность
@@ -2177,134 +2651,73 @@
             const ctx = game.ctx;
             const x = entity.x + offsetX;
             const y = entity.y + offsetY;
-            const time = Date.now() * 0.001;
             
-            // Эффект получения урона (красное свечение)
+            // Эффект получения урона
             if (entity.damageEffect > 0) {
                 ctx.save();
-                ctx.globalAlpha = entity.damageEffect * 0.6;
-                const gradient = ctx.createRadialGradient(x, y, 0, x, y, entity.radius + 10);
-                gradient.addColorStop(0, 'rgba(255, 0, 0, 0.8)');
-                gradient.addColorStop(1, 'transparent');
-                ctx.fillStyle = gradient;
+                ctx.globalAlpha = entity.damageEffect * 0.5;
+                ctx.fillStyle = '#ff0000';
                 ctx.beginPath();
-                ctx.arc(x, y, entity.radius + 10, 0, Math.PI * 2);
+                ctx.arc(x, y, entity.radius + 5, 0, Math.PI * 2);
                 ctx.fill();
                 ctx.restore();
             }
             
-            // Щит
-            if (entity.shield) {
-                ctx.save();
-                const shieldPulse = Math.sin(time * 3) * 0.2 + 0.8;
-                ctx.globalAlpha = 0.4;
-                ctx.strokeStyle = '#4CC9F0';
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.arc(x, y, entity.radius + 8, 0, Math.PI * 2);
-                ctx.stroke();
-                
-                // Вращающиеся щитовые сегменты
-                for (let i = 0; i < 6; i++) {
-                    const angle = time + (i / 6) * Math.PI * 2;
-                    ctx.beginPath();
-                    ctx.arc(
-                        x + Math.cos(angle) * (entity.radius + 8),
-                        y + Math.sin(angle) * (entity.radius + 8),
-                        4 * shieldPulse,
-                        0, Math.PI * 2
-                    );
-                    ctx.fillStyle = '#4CC9F0';
-                    ctx.fill();
-                }
-                ctx.restore();
-            }
-            
             // Тень
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
             ctx.beginPath();
-            ctx.arc(x, y + 5, entity.radius * 0.9, 0, Math.PI * 2);
+            ctx.arc(x, y + 4, entity.radius, 0, Math.PI * 2);
             ctx.fill();
             
-            // Основной круг с градиентом
+            // Основной круг
             const gradient = ctx.createRadialGradient(
                 x - entity.radius/3, y - entity.radius/3, 0,
                 x, y, entity.radius
             );
-            gradient.addColorStop(0, lightenColor(entity.color, 40));
-            gradient.addColorStop(0.7, entity.color);
-            gradient.addColorStop(1, darkenColor(entity.color, 20));
+            gradient.addColorStop(0, lightenColor(entity.color, 30));
+            gradient.addColorStop(1, entity.color);
             
             ctx.fillStyle = gradient;
             ctx.beginPath();
             ctx.arc(x, y, entity.radius, 0, Math.PI * 2);
             ctx.fill();
             
-            // Блики
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.beginPath();
-            ctx.ellipse(
-                x - entity.radius/3, 
-                y - entity.radius/3, 
-                entity.radius/3, 
-                entity.radius/4, 
-                0, 0, Math.PI * 2
-            );
-            ctx.fill();
-            
             // Контур
             ctx.strokeStyle = entity.isPlayer ? '#4CC9F0' : darkenColor(entity.color, 30);
-            ctx.lineWidth = 3;
+            ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.arc(x, y, entity.radius, 0, Math.PI * 2);
             ctx.stroke();
             
-            // Иконка оружия (если есть)
+            // Иконка оружия
             if (entity.weapon) {
                 ctx.save();
                 ctx.translate(x, y);
                 
                 // Вращающаяся иконка
-                const iconAngle = time * 2;
-                const iconDistance = entity.radius + 15;
+                const iconAngle = Date.now() * 0.002;
+                const iconDistance = entity.radius + 12;
                 const iconX = Math.cos(iconAngle) * iconDistance;
                 const iconY = Math.sin(iconAngle) * iconDistance;
                 
-                // Фон иконки
                 ctx.fillStyle = entity.weapon.color;
                 ctx.beginPath();
-                ctx.arc(iconX, iconY, 12, 0, Math.PI * 2);
+                ctx.arc(iconX, iconY, 10, 0, Math.PI * 2);
                 ctx.fill();
                 
-                // Обводка иконки
                 ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 2;
+                ctx.lineWidth = 1;
                 ctx.stroke();
-                
-                // Свечение
-                ctx.shadowColor = entity.weapon.color;
-                ctx.shadowBlur = 10;
-                ctx.fill();
-                ctx.shadowBlur = 0;
                 
                 ctx.restore();
             }
             
             // Имя
             ctx.fillStyle = '#fff';
-            ctx.font = `bold ${entity.isPlayer ? 16 : 14}px Arial`;
+            ctx.font = `bold ${entity.isPlayer ? 15 : 13}px Arial`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
             ctx.fillText(entity.name, x, y);
-            
-            // Серия убийств
-            if (entity.killStreak >= 3) {
-                ctx.font = 'bold 12px Arial';
-                ctx.fillStyle = ['#FF9800', '#4CC9F0', '#ff0000', '#FFD700'][
-                    Math.min(Math.floor(entity.killStreak / 3), 3)
-                ];
-                ctx.fillText('x' + entity.killStreak, x, y + entity.radius + 15);
-            }
             
             // Полоса здоровья
             drawHealthBar(entity, x, y);
@@ -2313,8 +2726,8 @@
         // Рисовать полосу здоровья
         function drawHealthBar(entity, x, y) {
             const ctx = game.ctx;
-            const barWidth = 80;
-            const barHeight = 8;
+            const barWidth = 60;
+            const barHeight = 6;
             const barX = x - barWidth / 2;
             const barY = y - entity.radius - 20;
             const healthPercent = entity.health / entity.maxHealth;
@@ -2323,10 +2736,9 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
             ctx.fillRect(barX, barY, barWidth, barHeight);
             
-            // Здоровье с анимацией
+            // Здоровье
             const currentWidth = barWidth * healthPercent;
             
-            // Градиент здоровья
             const healthGradient = ctx.createLinearGradient(barX, barY, barX + currentWidth, barY);
             if (healthPercent > 0.6) {
                 healthGradient.addColorStop(0, '#00ff00');
@@ -2342,27 +2754,10 @@
             ctx.fillStyle = healthGradient;
             ctx.fillRect(barX, barY, currentWidth, barHeight);
             
-            // Анимация низкого здоровья
-            if (healthPercent < 0.3) {
-                const pulse = Math.sin(Date.now() * 0.01) * 0.3 + 0.7;
-                ctx.globalAlpha = pulse;
-                ctx.fillStyle = '#ff0000';
-                ctx.fillRect(barX, barY, currentWidth, barHeight);
-                ctx.globalAlpha = 1;
-            }
-            
             // Рамка
             ctx.strokeStyle = '#000';
             ctx.lineWidth = 1;
             ctx.strokeRect(barX, barY, barWidth, barHeight);
-            
-            // Текст здоровья (только если не полное)
-            if (healthPercent < 1) {
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 11px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(Math.ceil(entity.health), x, barY - 6);
-            }
         }
 
         // Рисовать оружие на земле
@@ -2372,125 +2767,26 @@
             
             game.weapons.forEach(weapon => {
                 const x = weapon.x + offsetX;
-                const y = weapon.y + offsetY;
-                
-                // Плавающая анимация
-                const floatY = y + Math.sin(time + weapon.floatOffset) * 5;
-                
-                // Мигание нового оружия
-                if (weapon.blink) {
-                    const blink = Math.sin(time * 10) * 0.5 + 0.5;
-                    ctx.globalAlpha = blink;
-                    ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-                    ctx.beginPath();
-                    ctx.arc(x, floatY, 30, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.globalAlpha = 1;
-                }
+                const y = weapon.y + offsetY + Math.sin(time + weapon.floatOffset) * 5;
                 
                 // Вращение
                 ctx.save();
-                ctx.translate(x, floatY);
+                ctx.translate(x, y);
                 weapon.rotation += 0.02;
                 ctx.rotate(weapon.rotation);
                 
                 // Иконка оружия
-                const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 20);
-                gradient.addColorStop(0, lightenColor(weapon.color, 30));
-                gradient.addColorStop(1, weapon.color);
-                
-                ctx.fillStyle = gradient;
+                ctx.fillStyle = weapon.color;
                 ctx.beginPath();
-                ctx.arc(0, 0, 20, 0, Math.PI * 2);
+                ctx.arc(0, 0, 18, 0, Math.PI * 2);
                 ctx.fill();
                 
                 // Обводка
                 ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 2;
                 ctx.stroke();
                 
-                // Свечение
-                ctx.shadowColor = weapon.color;
-                ctx.shadowBlur = 15;
-                ctx.fill();
-                ctx.shadowBlur = 0;
-                
-                // Детали оружия
-                ctx.fillStyle = darkenColor(weapon.color, 30);
-                ctx.fillRect(-8, -5, 16, 10);
-                
                 ctx.restore();
-                
-                // Название
-                ctx.fillStyle = '#fff';
-                ctx.font = 'bold 14px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(weapon.name, x, floatY + 35);
-                
-                // Урон
-                ctx.font = '12px Arial';
-                ctx.fillStyle = '#ff6b6b';
-                ctx.fillText(weapon.damage + ' урона', x, floatY + 50);
-            });
-        }
-
-        // Рисовать баффы
-        function drawPowerUps(offsetX, offsetY) {
-            const ctx = game.ctx;
-            const time = Date.now() * 0.001;
-            
-            game.effects.forEach(effect => {
-                if (effect.type === 'powerUp') {
-                    const x = effect.x + offsetX;
-                    const y = effect.y + offsetY + Math.sin(time * 2 + effect.x * 0.01) * 10;
-                    
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.rotate(effect.rotation);
-                    
-                    // Фон баффа
-                    const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, effect.size);
-                    gradient.addColorStop(0, lightenColor(effect.color, 40));
-                    gradient.addColorStop(1, effect.color);
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.beginPath();
-                    ctx.arc(0, 0, effect.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    
-                    // Обводка
-                    ctx.strokeStyle = '#fff';
-                    ctx.lineWidth = 3;
-                    ctx.stroke();
-                    
-                    // Свечение
-                    ctx.shadowColor = effect.color;
-                    ctx.shadowBlur = 20;
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                    
-                    // Иконка в зависимости от типа
-                    ctx.fillStyle = '#fff';
-                    ctx.font = '20px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    
-                    const icon = {
-                        'shield': '🛡️',
-                        'heal': '❤️',
-                        'speed': '⚡'
-                    }[effect.powerUp.type];
-                    
-                    ctx.fillText(icon, 0, 0);
-                    
-                    ctx.restore();
-                    
-                    // Название баффа
-                    ctx.fillStyle = '#fff';
-                    ctx.font = 'bold 12px Arial';
-                    ctx.textAlign = 'center';
-                    ctx.fillText(effect.powerUp.name, x, y + effect.size + 20);
-                }
             });
         }
 
@@ -2517,17 +2813,15 @@
             const ctx = game.ctx;
             
             game.effects.forEach(effect => {
-                if (effect.type === 'powerUp') return; // Уже отрисованы
-                
                 const x = effect.x + offsetX;
                 const y = effect.y + offsetY;
                 const lifePercent = effect.life / effect.maxLife;
                 
                 ctx.save();
+                ctx.globalAlpha = lifePercent;
                 
                 switch(effect.type) {
                     case 'beam':
-                        ctx.globalAlpha = lifePercent;
                         ctx.strokeStyle = effect.color;
                         ctx.lineWidth = effect.width;
                         ctx.lineCap = 'round';
@@ -2538,20 +2832,11 @@
                         break;
                         
                     case 'ring':
-                        ctx.globalAlpha = lifePercent;
                         ctx.strokeStyle = effect.color;
                         ctx.lineWidth = effect.width;
                         ctx.beginPath();
                         ctx.arc(x, y, effect.radius * (1 - lifePercent), 0, Math.PI * 2);
                         ctx.stroke();
-                        break;
-                        
-                    case 'flash':
-                        ctx.globalAlpha = lifePercent;
-                        ctx.fillStyle = effect.color;
-                        ctx.beginPath();
-                        ctx.arc(x, y, effect.size * (1 - lifePercent), 0, Math.PI * 2);
-                        ctx.fill();
                         break;
                 }
                 
@@ -2589,31 +2874,46 @@
                 ctx.save();
                 ctx.globalAlpha = lifePercent;
                 
-                if (text.rotation) {
-                    ctx.translate(x, y);
-                    ctx.rotate(text.rotation);
-                    ctx.translate(-x, -y);
-                }
-                
-                // Тень текста
+                // Тень
                 ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
                 ctx.font = `bold ${text.size}px Arial`;
                 ctx.textAlign = 'center';
-                ctx.fillText(text.text, x + 2, y + 2);
+                ctx.fillText(text.text, x + 1, y + 1);
                 
                 // Основной текст
                 ctx.fillStyle = text.color;
-                ctx.font = `bold ${text.size}px Arial`;
-                ctx.textAlign = 'center';
                 ctx.fillText(text.text, x, y);
                 
-                // Свечение для важного текста
-                if (text.size >= 30) {
-                    ctx.shadowColor = text.color;
-                    ctx.shadowBlur = 10;
-                    ctx.fillText(text.text, x, y);
-                    ctx.shadowBlur = 0;
-                }
+                ctx.restore();
+            });
+        }
+
+        // Рисовать короны
+        function drawCrowns(offsetX, offsetY) {
+            const ctx = game.ctx;
+            
+            game.crowns.forEach(crown => {
+                const x = crown.x + offsetX;
+                const y = crown.y + offsetY;
+                const lifePercent = crown.life / 60;
+                
+                ctx.save();
+                ctx.globalAlpha = lifePercent;
+                ctx.translate(x, y);
+                ctx.rotate(crown.rotation);
+                
+                // Корона
+                ctx.fillStyle = '#FFD700';
+                ctx.font = `${crown.size}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('👑', 0, 0);
+                
+                // Свечение
+                ctx.shadowColor = '#FFD700';
+                ctx.shadowBlur = 10;
+                ctx.fillText('👑', 0, 0);
+                ctx.shadowBlur = 0;
                 
                 ctx.restore();
             });
@@ -2639,229 +2939,6 @@
             const B = Math.max(0, (num & 0x0000FF) - amt);
             
             return "#" + ((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1);
-        }
-
-        // Обновить игровой интерфейс
-        function updateGameUI() {
-            document.getElementById('playerNameDisplay').textContent = game.player.name;
-            document.getElementById('healthDisplay').textContent = Math.ceil(game.player.health);
-            document.getElementById('coinsDisplay').textContent = game.coins;
-            document.getElementById('enemiesDisplay').textContent = game.enemies.length;
-            document.getElementById('killsDisplay').textContent = game.kills;
-            document.getElementById('comboDisplay').textContent = game.combo;
-            
-            // Обновление полосы здоровья
-            const healthPercent = (game.player.health / game.player.maxHealth) * 100;
-            document.getElementById('healthBarFill').style.width = healthPercent + '%';
-            
-            // Цвет полосы здоровья
-            const healthBar = document.getElementById('healthBarFill');
-            if (healthPercent > 60) {
-                healthBar.style.background = 'linear-gradient(90deg, #00ff00, #00cc00)';
-            } else if (healthPercent > 30) {
-                healthBar.style.background = 'linear-gradient(90deg, #FF9800, #EF6C00)';
-            } else {
-                healthBar.style.background = 'linear-gradient(90deg, #ff0000, #cc0000)';
-                // Пульсация при низком здоровье
-                healthBar.style.animation = healthPercent < 20 ? 'pulse 0.5s infinite' : 'none';
-            }
-            
-            // Обновление индикатора щита
-            if (game.powerUpActive && Date.now() < game.powerUpEndTime) {
-                const timeLeft = Math.ceil((game.powerUpEndTime - Date.now()) / 1000);
-                document.getElementById('powerUpIndicator').textContent = `🛡️ ЩИТ: ${timeLeft}с`;
-            } else if (game.powerUpActive) {
-                document.getElementById('powerUpIndicator').style.display = 'none';
-                game.powerUpActive = false;
-            }
-        }
-
-        // Обновить интерфейс оружия
-        function updateWeaponUI() {
-            if (game.player.weapon) {
-                document.getElementById('weaponDisplay').textContent = game.player.weapon.name;
-                document.getElementById('ammoDisplay').textContent = game.player.weapon.ammo;
-                document.getElementById('damageDisplay').textContent = game.player.weapon.damage;
-                document.getElementById('cooldownDisplay').textContent = 'ГОТОВО';
-            } else {
-                document.getElementById('weaponDisplay').textContent = 'НЕТ';
-                document.getElementById('ammoDisplay').textContent = '-';
-                document.getElementById('damageDisplay').textContent = '-';
-                const timeSinceLastHit = Date.now() - game.player.lastHitTime;
-                if (timeSinceLastHit < 1000) {
-                    document.getElementById('cooldownDisplay').textContent = 
-                        Math.ceil((1000 - timeSinceLastHit) / 1000) + 'с';
-                } else {
-                    document.getElementById('cooldownDisplay').textContent = 'ГОТОВО';
-                }
-            }
-        }
-
-        // Пауза
-        function togglePause() {
-            if (!game.running) return;
-            
-            game.paused = !game.paused;
-            
-            if (game.paused) {
-                document.getElementById('gameScreen').classList.remove('active');
-                document.getElementById('pauseScreen').classList.add('active');
-                document.getElementById('pauseBtn').textContent = '▶️ ПРОДОЛЖИТЬ';
-            } else {
-                document.getElementById('pauseScreen').classList.remove('active');
-                document.getElementById('gameScreen').classList.add('active');
-                document.getElementById('pauseBtn').textContent = '⏸️ ПАУЗА';
-                gameLoop();
-            }
-        }
-
-        // Показать игровое сообщение
-        function showGameMessage(text, color = '#4CC9F0') {
-            const messageDiv = document.getElementById('gameMessage');
-            messageDiv.textContent = text;
-            messageDiv.style.borderColor = color;
-            messageDiv.style.display = 'block';
-            messageDiv.style.boxShadow = `0 0 50px ${color}`;
-            
-            setTimeout(() => {
-                messageDiv.style.display = 'none';
-            }, 2000);
-        }
-
-        // Выйти в меню
-        function exitToMenu() {
-            game.running = false;
-            game.paused = false;
-            
-            // Сохраняем данные
-            saveGameData();
-            
-            // Обновляем статистику в меню
-            updateMenuStats();
-            
-            // Переключаем экраны
-            document.getElementById('gameScreen').classList.remove('active');
-            document.getElementById('pauseScreen').classList.remove('active');
-            document.getElementById('menuScreen').classList.add('active');
-        }
-
-        // Победа
-        function winGame() {
-            game.running = false;
-            
-            // Награда
-            const baseReward = 20;
-            const killReward = game.kills * 3;
-            const comboBonus = Math.floor(game.combo * 0.5);
-            const winBonus = 10;
-            const totalReward = baseReward + killReward + comboBonus + winBonus;
-            
-            game.coins += totalReward;
-            game.wins++;
-            
-            // Сохраняем
-            saveGameData();
-            
-            // Эффекты победы
-            createVictoryEffects();
-            
-            // Показываем сообщение о победе
-            setTimeout(() => {
-                showGameMessage(`🎉 ПОБЕДА! +${totalReward}💰`, '#FFD700');
-                
-                // Ждем 3 секунды и возвращаем в меню
-                setTimeout(() => {
-                    exitToMenu();
-                    alert(`🏆 ПОБЕДА!\n\nВаш результат:\nУбийств: ${game.kills}\nКомбо: x${game.combo}\nМонет заработано: ${totalReward}\nВсего монет: ${game.coins}`);
-                }, 3000);
-            }, 500);
-        }
-
-        // Эффекты победы
-        function createVictoryEffects() {
-            // Большой фейерверк
-            for (let i = 0; i < 30; i++) {
-                setTimeout(() => {
-                    const angle = Math.random() * Math.PI * 2;
-                    const distance = 100 + Math.random() * 150;
-                    const x = game.player.x + Math.cos(angle) * distance;
-                    const y = game.player.y + Math.sin(angle) * distance;
-                    const color = ['#FFD700', '#4CC9F0', '#FF416C', '#4CAF50'][Math.floor(Math.random() * 4)];
-                    
-                    createFireworkEffect(x, y, color);
-                }, i * 100);
-            }
-            
-            // Короны вокруг игрока
-            for (let i = 0; i < 8; i++) {
-                setTimeout(() => {
-                    const angle = (i / 8) * Math.PI * 2;
-                    const distance = 60;
-                    createFloatingText(
-                        '👑',
-                        game.player.x + Math.cos(angle) * distance,
-                        game.player.y + Math.sin(angle) * distance,
-                        '#FFD700',
-                        36
-                    );
-                }, i * 200);
-            }
-        }
-
-        // Эффект фейерверка
-        function createFireworkEffect(x, y, color) {
-            // Центральная вспышка
-            createFlashEffect(x, y, color, 40, 30);
-            
-            // Разлетающиеся частицы
-            for (let i = 0; i < 24; i++) {
-                const angle = Math.random() * Math.PI * 2;
-                const speed = 2 + Math.random() * 6;
-                createParticle(
-                    x, y,
-                    color,
-                    Math.cos(angle) * speed,
-                    Math.sin(angle) * speed,
-                    2 + Math.random() * 4,
-                    60 + Math.random() * 60
-                );
-            }
-            
-            // Звезды
-            for (let i = 0; i < 8; i++) {
-                const angle = (i / 8) * Math.PI * 2;
-                const speed = 1 + Math.random() * 3;
-                createParticle(
-                    x, y,
-                    '#ffffff',
-                    Math.cos(angle) * speed,
-                    Math.sin(angle) * speed,
-                    1 + Math.random() * 2,
-                    90 + Math.random() * 60
-                );
-            }
-        }
-
-        // Конец игры
-        function gameOver() {
-            game.running = false;
-            
-            // Сохраняем
-            saveGameData();
-            
-            // Эффект смерти игрока
-            createDeathEffect(game.player);
-            
-            // Показываем сообщение о поражении
-            setTimeout(() => {
-                showGameMessage('💀 ПОРАЖЕНИЕ', '#ff0000');
-                
-                // Ждем 2 секунды и возвращаем в меню
-                setTimeout(() => {
-                    exitToMenu();
-                    alert(`💀 ИГРА ОКОНЧЕНА!\n\nВаш результат:\nУбийств: ${game.kills}\nКомбо: x${game.combo}\nМонет заработано: ${game.kills * 2}\nВсего монет: ${game.coins}`);
-                }, 2000);
-            }, 500);
         }
     </script>
 </body>
